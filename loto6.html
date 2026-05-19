@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>NEXTロト研究所</title>
+<style>
+body{font-family:sans-serif;background:linear-gradient(135deg,#111,#222,#000);color:white;text-align:center;padding:25px;}
+h1{color:#ffd700;font-size:36px;text-shadow:0 0 10px #ffcc00;}
+input,select{padding:12px;font-size:18px;width:330px;margin:6px;border-radius:8px;border:none;}
+button{padding:12px 24px;font-size:18px;margin:8px;cursor:pointer;border:none;border-radius:10px;background:#ffd700;color:#111;font-weight:bold;}
+button:hover{background:#ffea70;}
+.box{background:#1e1e1e;margin:18px auto;padding:20px;border-radius:16px;max-width:760px;box-shadow:0 0 15px rgba(255,215,0,0.25);}
+.ball{display:inline-flex;align-items:center;justify-content:center;width:54px;height:54px;margin:6px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff,#ffd700,#b8860b);color:#111;font-size:22px;font-weight:bold;box-shadow:0 0 10px rgba(255,215,0,0.7);}
+.hitball{background:radial-gradient(circle at 30% 30%,#fff,#7CFC00,#228B22);}
+.info{font-size:15px;color:#ddd;margin-top:8px;}
+.notice{margin-top:25px;color:#ff9999;font-size:14px;}
+.history{font-size:16px;text-align:left;line-height:1.8;color:#eee;}
+.copyMsg,.checkMsg{color:#7CFC00;font-weight:bold;margin-top:10px;}
+hr{border:0;border-top:1px solid #555;}
+@media screen and (max-width: 600px){
+
+    body{
+        padding:12px;
+    }
+
+    h1{
+        font-size:28px;
+    }
+
+    input,select{
+        width:90%;
+        font-size:16px;
+    }
+
+    .box{
+        padding:15px;
+        margin:12px auto;
+    }
+
+    .ball{
+        width:44px;
+        height:44px;
+        font-size:18px;
+        margin:4px;
+    }
+
+    button{
+        width:90%;
+        font-size:16px;
+    }
+
+    img{
+        max-width:90%;
+        height:auto;
+    }
+</style>
+}</head>
+
+<body>
+
+<img src="logo.png" width="420">
+<h1>NEXTロト研究所</h1>
+<div class="box">
+<h2>NEXTロト研究所とは？</h2>
+<div class="box">
+
+<h2>使い方</h2>
+
+<p>
+① 前回当選数字を入力
+</p>
+
+<p>
+② 安定型 or 攻め型を選択
+</p>
+
+<p>
+③ 必要ならキャリーオーバーモードON
+</p>
+
+<p>
+④ 「予想する」を押す
+</p>
+
+<p>
+⑤ コピー機能で数字を保存
+</p>
+
+<p>
+⑥ 抽選後に当選数字を入力して照合
+</p>
+
+</div>
+
+<p>
+NEXTロト研究所は、ロト6の予想を楽しむための研究型アプリです。
+</p>
+
+<p>
+前回当選数字、引っ張り数字、下一桁一致、連続数字、キャリーオーバーなどを考慮して、
+独自条件で予想数字を生成します。
+</p>
+
+<p>
+安定型と攻め型を切り替えることで、バランス重視・攻め重視の予想を使い分けできます。
+</p>
+
+<p style="color:#ff9999;">
+※このアプリは当選を保証するものではありません。予想を楽しむための補助ツールです。
+</p>
+</div>
+
+<div class="box">
+<p>前回当選数字を入力してください</p>
+<input id="lastNumbers" placeholder="例：01 02 04 05 08 38">
+
+<p>
+<select id="mode">
+<option value="stable">安定型</option>
+<option value="attack">攻め型</option>
+</select>
+</p>
+
+<p>
+<label><input type="checkbox" id="carryMode"> キャリーオーバーモードON</label>
+</p>
+
+<button onclick="generateLoto()">予想する</button>
+</div>
+
+<div class="box">
+<h2>今回の予想</h2>
+
+<h3>1口目</h3>
+<div id="result1"></div>
+<div class="info" id="info1"></div>
+<button onclick="copyTicket(1)">1口目をコピー</button>
+
+<h3>2口目</h3>
+<div id="result2"></div>
+<div class="info" id="info2"></div>
+<button onclick="copyTicket(2)">2口目をコピー</button>
+
+<br>
+<button onclick="copyBothTickets()">2口まとめてコピー</button>
+<div class="copyMsg" id="copyMsg"></div>
+</div>
+
+<div class="box">
+<h2>当選結果と照合</h2>
+<p>当選数字を入力してください</p>
+<input id="winningNumbers" placeholder="例：01 02 04 05 08 38">
+<br>
+<button onclick="checkLatestResult()">今回の予想と照合</button>
+<button onclick="checkSavedHistory()">保存履歴すべてと照合</button>
+<div class="checkMsg" id="checkMsg"></div>
+</div>
+
+<div class="box">
+<h2>保存された予想履歴</h2>
+<button onclick="clearHistory()">履歴を全部削除</button>
+<div class="history" id="history">まだ履歴はありません。</div>
+</div>
+
+<div class="notice">
+※このアプリは当選を保証するものではありません。<br>
+独自条件による予想補助ツールです。
+</div>
+
+<script>
+let historyList = [];
+let currentTicket1 = [];
+let currentTicket2 = [];
+
+function pad(n){
+    return String(n).padStart(2,"0");
+}
+
+function balls(numbers, hits=[]){
+    return numbers.map(n => {
+        let cls = hits.includes(n) ? "ball hitball" : "ball";
+        return "<span class='" + cls + "'>" + pad(n) + "</span>";
+    }).join("");
+}
+
+function parseNumbersFromInput(id){
+    let text = document.getElementById(id).value;
+    let nums = text
+        .replace(/・/g," ")
+        .replace(/,/g," ")
+        .replace(/、/g," ")
+        .split(/\s+/)
+        .map(Number)
+        .filter(n => n >= 1 && n <= 43);
+
+    return [...new Set(nums)];
+}
+
+function getLastDigitPairCount(numbers){
+    let count = 0;
+    for(let i=0;i<numbers.length;i++){
+        for(let j=i+1;j<numbers.length;j++){
+            if(numbers[i] % 10 === numbers[j] % 10) count++;
+        }
+    }
+    return count;
+}
+
+function hasConsecutive(numbers){
+    for(let i=0;i<numbers.length-1;i++){
+        if(numbers[i] + 1 === numbers[i+1]) return true;
+    }
+    return false;
+}
+
+function firstTwoSameLastDigit(numbers){
+    return numbers[0] % 10 === numbers[1] % 10;
+}
+
+function countPullNumbers(numbers,lastNumbers){
+    return numbers.filter(n => lastNumbers.includes(n)).length;
+}
+
+function countLow(numbers){
+    return numbers.filter(n => n <= 15).length;
+}
+
+function countHigh(numbers){
+    return numbers.filter(n => n >= 30).length;
+}
+
+function countOdd(numbers){
+    return numbers.filter(n => n % 2 === 1).length;
+}
+
+function createTicket(lastNumbers, needConsecutive, carryMode, mode){
+    let tries = 0;
+
+    while(tries < 30000){
+        tries++;
+
+        let numbers = [];
+        let pull = lastNumbers[Math.floor(Math.random() * lastNumbers.length)];
+        numbers.push(pull);
+
+        while(numbers.length < 6){
+            let num = Math.floor(Math.random() * 43) + 1;
+
+            if(!carryMode && num === 41) continue;
+            if(!numbers.includes(num)) numbers.push(num);
+        }
+
+        numbers.sort((a,b)=>a-b);
+
+        if(numbers[0] < 1 || numbers[0] > 9) continue;
+        if(countPullNumbers(numbers,lastNumbers) !== 1) continue;
+        if(getLastDigitPairCount(numbers) !== 1) continue;
+        if(firstTwoSameLastDigit(numbers)) continue;
+        if(needConsecutive && !hasConsecutive(numbers)) continue;
+        if(!needConsecutive && hasConsecutive(numbers)) continue;
+
+        let low = countLow(numbers);
+        let high = countHigh(numbers);
+        let odd = countOdd(numbers);
+
+        if(mode === "stable"){
+            if(low >= 5) continue;
+            if(high === 0) continue;
+            if(odd === 0 || odd === 6) continue;
+        }
+
+        if(mode === "attack"){
+            if(carryMode && high < 2) continue;
+        }
+
+        return numbers;
+    }
+
+    return null;
+}
+
+function saveHistory(){
+    localStorage.setItem("loto6History", JSON.stringify(historyList));
+}
+
+function loadHistory(){
+    let saved = localStorage.getItem("loto6History");
+    if(saved){
+        historyList = JSON.parse(saved);
+    }
+    renderHistory();
+}
+
+function renderHistory(){
+    let area = document.getElementById("history");
+
+    if(historyList.length === 0){
+        area.innerHTML = "まだ履歴はありません。";
+        return;
+    }
+
+    area.innerHTML = historyList.map(item => {
+        return "<hr>" +
+            "<b>" + item.time + "</b><br>" +
+            item.modeName + (item.carryMode ? " ／ キャリーON" : " ／ キャリーOFF") + "<br>" +
+            "1口目： " + item.ticket1.map(pad).join(" ・ ") + "<br>" +
+            "2口目： " + item.ticket2.map(pad).join(" ・ ");
+    }).join("");
+}
+
+function addHistory(ticket1, ticket2, modeName, carryMode){
+    let item = {
+        time: new Date().toLocaleString(),
+        modeName: modeName,
+        carryMode: carryMode,
+        ticket1: ticket1,
+        ticket2: ticket2
+    };
+
+    historyList.unshift(item);
+    saveHistory();
+    renderHistory();
+}
+
+function clearHistory(){
+    if(confirm("保存履歴を全部削除しますか？")){
+        historyList = [];
+        saveHistory();
+        renderHistory();
+    }
+}
+
+function copyText(text){
+    navigator.clipboard.writeText(text).then(function(){
+        document.getElementById("copyMsg").innerHTML = "コピーしました";
+    }).catch(function(){
+        alert("コピーに失敗しました。");
+    });
+}
+
+function copyTicket(num){
+    if(num === 1 && currentTicket1.length > 0){
+        copyText(currentTicket1.map(pad).join(" ・ "));
+    }else if(num === 2 && currentTicket2.length > 0){
+        copyText(currentTicket2.map(pad).join(" ・ "));
+    }else{
+        alert("先に予想してください。");
+    }
+}
+
+function copyBothTickets(){
+    if(currentTicket1.length === 0 || currentTicket2.length === 0){
+        alert("先に予想してください。");
+        return;
+    }
+
+    let text =
+        "1口目： " + currentTicket1.map(pad).join(" ・ ") + "\n" +
+        "2口目： " + currentTicket2.map(pad).join(" ・ ");
+
+    copyText(text);
+}
+
+function generateLoto(){
+    let lastNumbers = parseNumbersFromInput("lastNumbers");
+    let carryMode = document.getElementById("carryMode").checked;
+    let mode = document.getElementById("mode").value;
+
+    if(lastNumbers.length === 0){
+        alert("前回当選数字を入力してください。");
+        return;
+    }
+
+    let ticket1 = createTicket(lastNumbers,true,carryMode,mode);
+    let ticket2 = createTicket(lastNumbers,false,carryMode,mode);
+
+    if(ticket1 === null || ticket2 === null){
+        alert("条件が厳しすぎて生成できませんでした。");
+        return;
+    }
+
+    currentTicket1 = ticket1;
+    currentTicket2 = ticket2;
+
+    let pull1 = ticket1.filter(n => lastNumbers.includes(n));
+    let pull2 = ticket2.filter(n => lastNumbers.includes(n));
+    let modeName = mode === "stable" ? "安定型" : "攻め型";
+
+    document.getElementById("result1").innerHTML = balls(ticket1);
+    document.getElementById("result2").innerHTML = balls(ticket2);
+
+    document.getElementById("info1").innerHTML =
+        modeName + " ／ 引っ張り数字：" + pull1.map(pad).join("・") +
+        " ／ 下一桁一致1組 ／ 連続数字あり" +
+        (carryMode ? " ／ キャリー考慮" : "");
+
+    document.getElementById("info2").innerHTML =
+        modeName + " ／ 引っ張り数字：" + pull2.map(pad).join("・") +
+        " ／ 下一桁一致1組 ／ 連続数字なし" +
+        (carryMode ? " ／ キャリー考慮" : "");
+
+    document.getElementById("copyMsg").innerHTML = "";
+    document.getElementById("checkMsg").innerHTML = "";
+
+    addHistory(ticket1,ticket2,modeName,carryMode);
+}
+
+function checkLatestResult(){
+    let winning = parseNumbersFromInput("winningNumbers");
+
+    if(currentTicket1.length === 0 || currentTicket2.length === 0){
+        alert("先に予想してください。");
+        return;
+    }
+
+    if(winning.length === 0){
+        alert("当選数字を入力してください。");
+        return;
+    }
+
+    let hits1 = currentTicket1.filter(n => winning.includes(n));
+    let hits2 = currentTicket2.filter(n => winning.includes(n));
+
+    document.getElementById("result1").innerHTML = balls(currentTicket1,hits1);
+    document.getElementById("result2").innerHTML = balls(currentTicket2,hits2);
+
+    document.getElementById("checkMsg").innerHTML =
+        "今回の予想照合<br>" +
+        "1口目：" + hits1.length + "個一致（" + hits1.map(pad).join("・") + "）<br>" +
+        "2口目：" + hits2.length + "個一致（" + hits2.map(pad).join("・") + "）";
+}
+
+function checkSavedHistory(){
+    let winning = parseNumbersFromInput("winningNumbers");
+
+    if(winning.length === 0){
+        alert("当選数字を入力してください。");
+        return;
+    }
+
+    if(historyList.length === 0){
+        alert("保存履歴がありません。");
+        return;
+    }
+
+    let html = "<b>保存履歴との照合結果</b><br>";
+
+    historyList.forEach((item,index) => {
+        let hits1 = item.ticket1.filter(n => winning.includes(n));
+        let hits2 = item.ticket2.filter(n => winning.includes(n));
+
+        html += "<hr>" +
+            "<b>" + item.time + "</b><br>" +
+            "1口目：" + hits1.length + "個一致（" + hits1.map(pad).join("・") + "）<br>" +
+            "2口目：" + hits2.length + "個一致（" + hits2.map(pad).join("・") + "）";
+    });
+
+    document.getElementById("checkMsg").innerHTML = html;
+}
+
+loadHistory();
+</script>
+
+</body>
+</html>
