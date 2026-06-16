@@ -2,112 +2,1566 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEXTロト研究所</title>
-<style>
-body{font-family:sans-serif;background:linear-gradient(135deg,#111,#222,#000);color:white;text-align:center;padding:25px;}
-h1{color:#ffd700;font-size:36px;text-shadow:0 0 10px #ffcc00;}
-input,select{padding:12px;font-size:18px;width:330px;margin:6px;border-radius:8px;border:none;}
-button{padding:12px 24px;font-size:18px;margin:8px;cursor:pointer;border:none;border-radius:10px;background:#ffd700;color:#111;font-weight:bold;}
-button:hover{background:#ffea70;}
-.box{background:#1e1e1e;margin:18px auto;padding:20px;border-radius:16px;max-width:760px;box-shadow:0 0 15px rgba(255,215,0,0.25);}
-.ball{display:inline-flex;align-items:center;justify-content:center;width:54px;height:54px;margin:6px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff,#ffd700,#b8860b);color:#111;font-size:22px;font-weight:bold;box-shadow:0 0 10px rgba(255,215,0,0.7);}
-.hitball{background:radial-gradient(circle at 30% 30%,#fff,#7CFC00,#228B22);}
-.info{font-size:15px;color:#ddd;margin-top:8px;}
-.notice{margin-top:25px;color:#ff9999;font-size:14px;}
-.history{font-size:16px;text-align:left;line-height:1.8;color:#eee;}
-.copyMsg,.checkMsg{color:#7CFC00;font-weight:bold;margin-top:10px;}
-hr{border:0;border-top:1px solid #555;}
-@media screen and (max-width: 600px){
 
-    body{
-        padding:12px;
+<style>
+
+.pastPowerBox {
+  margin: 15px 0;
+  padding: 12px;
+  border: 2px solid gold;
+  border-radius: 12px;
+  background: rgba(255,215,0,0.08);
+  text-align: center;
+}
+
+.pastPowerBox.strongMode{
+  box-shadow:
+    0 0 15px gold,
+    0 0 35px orange,
+    0 0 60px gold;
+
+  animation: strongGlow 1.2s infinite alternate;
+}
+
+@keyframes strongGlow{
+
+  from{
+    transform:scale(1);
+    filter:brightness(1);
+  }
+
+  to{
+    transform:scale(1.02);
+    filter:brightness(1.15);
+  }
+
+}
+
+.pastPowerTitle {
+  font-weight: bold;
+  color: gold;
+  margin-bottom: 8px;
+}
+
+.pastPowerBox button {
+  margin: 4px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#pastPowerStatus {
+  margin-top: 8px;
+  color: gold;
+  font-weight: bold;
+  text-shadow: 0 0 10px gold;
+}
+
+#boostActiveMsg{
+  display:none;
+  margin-top:12px;
+  margin-bottom:15px;
+  text-align:center;
+
+  font-size:22px;
+  font-weight:bold;
+  color:#ffd700;
+
+  text-shadow:
+    0 0 10px gold,
+    0 0 20px orange,
+    0 0 35px gold;
+
+  animation: strongGlow 1s infinite alternate;
+}
+
+#boostApplied{
+  display:none;
+  margin:14px auto;
+  padding:10px 14px;
+  width:80%;
+  border-radius:14px;
+
+  font-size:22px;
+  font-weight:bold;
+  color:#ffd700;
+
+  background:rgba(255,215,0,0.12);
+  border:1px solid rgba(255,215,0,0.8);
+
+  text-shadow:
+    0 0 10px gold,
+    0 0 20px orange;
+
+  box-shadow:
+    0 0 15px rgba(255,215,0,0.6),
+    0 0 35px rgba(255,140,0,0.4);
+
+  animation: strongGlow 1s infinite alternate;
+}
+
+#superBoost{
+  display:none;
+  margin:16px auto;
+  padding:14px 18px;
+  width:82%;
+  border-radius:16px;
+  font-size:24px;
+  font-weight:bold;
+  color:#ffffff;
+  background:linear-gradient(90deg,#ff3300,#ff9900,#ffd700);
+  box-shadow:0 0 18px #ff3300,0 0 35px #ff9900,0 0 55px #ffd700;
+  text-shadow:0 0 8px #000,0 0 16px #ff0000;
+  animation: superHotPulse 0.4s infinite alternate;
+}
+
+#carryBoost{
+  display:none;
+  margin:16px auto;
+  padding:14px 18px;
+  width:82%;
+  border-radius:16px;
+
+  font-size:22px;
+  font-weight:bold;
+  color:#ffffff;
+
+  background:linear-gradient(
+90deg,
+#00aa44,
+#00cc66,
+#33dd88
+);
+
+  box-shadow:
+    0 0 18px #00aa44,
+    0 0 35px #00cc66;
+
+  text-shadow:
+    0 0 8px #000;
+
+  animation: strongGlow 1s infinite alternate;
+}
+
+
+#numberRanking{
+    margin:16px 0 18px;
+    line-height:1.7;
+    font-size:18px;
+}
+
+#aiRecommend{
+    margin:18px 0 22px;
+    line-height:1.8;
+    font-size:18px;
+    font-weight:bold;
+}
+
+#aiComment{
+    margin:18px auto 22px;
+    padding:12px 16px;
+    width:80%;
+    border:1px solid rgba(255,215,0,0.7);
+    border-radius:12px;
+    background:rgba(255,215,0,0.12);
+    box-shadow:
+        0 0 10px rgba(255,215,0,0.4),
+        0 0 25px rgba(255,215,0,0.25);
+    line-height:1.7;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.result-box{
+    transition: all 0.3s ease;
+}
+
+.result-box:hover{
+    transform: translateY(-10px) scale(1.02);
+    border-color:#00fff2;
+    box-shadow:
+      0 0 20px #00fff2,
+      0 0 50px rgba(0,255,242,0.8),
+      0 25px 70px rgba(0,0,0,0.95);
+}
+
+
+.sparkle{
+  position:fixed;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:white;
+  pointer-events:none;
+  z-index:1;
+
+  box-shadow:
+    0 0 8px white,
+    0 0 15px gold,
+    0 0 25px #00ffff;
+
+  animation:sparkleFall linear forwards;
+}
+
+@keyframes sparkleFall{
+
+  from{
+    transform:translateY(-20px) scale(0.5);
+    opacity:0;
+  }
+
+  20%{
+    opacity:1;
+  }
+
+  to{
+    transform:translateY(110vh) scale(1.2);
+    opacity:0;
+  }
+
+}
+
+.shootingStar{
+  position:fixed;
+  width:120px;
+  height:2px;
+
+  background:linear-gradient(
+    90deg,
+    rgba(255,255,255,1),
+    rgba(255,255,255,0)
+  );
+
+  pointer-events:none;
+  z-index:999;
+
+  box-shadow:
+    0 0 10px white,
+    0 0 20px cyan;
+
+  transform:rotate(-25deg);
+
+  animation:shootStar linear forwards;
+}
+
+@keyframes shootStar{
+
+  from{
+    transform:
+      translateX(-200px)
+      translateY(0)
+      rotate(-25deg);
+
+    opacity:1;
+  }
+
+  to{
+    transform:
+      translateX(calc(100vw + 300px))
+      translateY(250px)
+      rotate(-25deg);
+
+    opacity:0;
+  }
+
+}
+
+body{
+
+    margin:0;
+    font-family:sans-serif;
+    background:
+linear-gradient(rgba(0,255,255,0.24) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0,255,255,0.24) 1px, transparent 1px),
+radial-gradient(circle at top,#333,#111 40%,#000 100%);
+
+background-size:
+40px 40px,
+40px 40px,
+100% 100%;
+    color:white;
+    text-align:center;
+    padding:25px;
+    min-height:100vh;
+}
+
+h1{
+    color:#ffd700;
+    font-size:42px;
+    text-shadow:0 0 10px #ffcc00;
+    letter-spacing:3px;
+    animation: glow 2s infinite alternate;
+}
+@keyframes glow{
+    from{
+        text-shadow:0 0 10px #ffcc00;
     }
 
+    to{
+        text-shadow:
+        0 0 20px #ffd700,
+        0 0 40px #ffea00;
+    }
+}
+
+.logo{
+    max-width:420px;
+    width:90%;
+    height:auto;
+    margin-bottom:10px;
+}
+
+input,select{
+    padding:12px;
+    font-size:18px;
+    width:330px;
+    margin:6px;
+    border-radius:8px;
+    border:none;
+}
+
+button{
+    padding:12px 24px;
+    font-size:18px;
+    margin:8px;
+    cursor:pointer;
+    border:none;
+    border-radius:10px;
+    background:#ffd700;
+    color:#111;
+    font-weight:bold;
+    transition:0.2s;
+    box-shadow:0 0 10px rgba(255,215,0,0.5);
+    position:relative;
+    overflow:hidden;
+}
+
+button:hover{
+    background:#ffea70;
+    transform:scale(1.05);
+    box-shadow:0 0 20px rgba(255,215,0,0.9);
+}
+
+button:active{
+    transform:scale(0.96);
+    box-shadow:
+        0 0 25px rgba(255,255,0,1),
+        0 0 45px rgba(0,255,255,0.9);
+}
+
+#startBtn.generating{
+    animation:pulseGlow 0.45s infinite alternate;
+}
+
+@keyframes pulseGlow{
+    from{
+        box-shadow:
+            0 0 15px rgba(255,255,0,0.7),
+            0 0 30px rgba(0,255,255,0.5);
+    }
+
+    to{
+        box-shadow:
+            0 0 55px rgba(255,255,0,1),
+            0 0 100px rgba(0,255,255,1);
+    }
+}
+
+.box{
+    background:linear-gradient(145deg,#1b1b1b,#111);
+    margin:25px auto;
+    padding:25px;
+    border-radius:22px;
+    animation: boxGlow 3s infinite alternate;
+
+    max-width:760px;
+
+    border:1px solid rgba(255,215,0,0.18);
+
+    box-shadow:
+    0 0 20px rgba(255,215,0,0.10),
+    0 0 50px rgba(255,215,0,0.05);
+
+    /* backdrop-filter:blur(10px); */
+
+    transition:0.3s;
+}
+
+@keyframes boxGlow{
+
+  from{
+    box-shadow:
+      0 0 20px rgba(255,215,0,0.10),
+      0 0 50px rgba(255,215,0,0.05);
+  }
+
+  to{
+    box-shadow:
+      0 0 28px rgba(255,215,0,0.35),
+      0 0 70px rgba(0,255,255,0.18),
+      0 0 95px rgba(255,215,0,0.12);
+  }
+
+}
+
+.option-box{
+  background:rgba(255,255,255,0.05);
+  border:1px solid #ffd700;
+  border-radius:16px;
+  padding:16px;
+  margin:20px auto;
+  width:90%;
+  max-width:500px;
+  box-shadow:0 0 15px rgba(255,215,0,0.2);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+
+}
+
+.option-box h3{
+  color:#ffd700;
+  margin-bottom:12px;
+}
+
+.option-box label{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  justify-content:flex-start;
+  width:260px;
+  margin:12px auto;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.option-box input{
+    width:20px;
+    height:20px;
+    accent-color:#ffd700;
+    cursor:pointer;
+}
+
+.box:hover{
+    transform:translateY(-4px);
+    box-shadow:
+    0 0 30px rgba(255,215,0,0.18),
+    0 0 60px rgba(255,215,0,0.08);
+}
+.ball{
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+
+    width:60px;
+    height:60px;
+
+    margin:8px;
+    border-radius:50%;
+
+    background:linear-gradient(145deg,#ffd700,#ffb300);
+    color:#111;
+
+    font-size:24px;
+    font-weight:bold;
+
+    box-shadow:
+    0 0 12px rgba(255,215,0,0.7),
+    inset 0 2px 8px rgba(255,255,255,0.45),
+    inset 0 -4px 10px rgba(0,0,0,0.25);
+
+    border:2px solid #fff3;
+    
+    animation:popBall 1.4s ease;
+
+}
+
+@keyframes popBall{
+    0%{
+    transform:translateY(160px) scale(0.2);
+    opacity:0;
+}
+   
+    60%{
+    transform:translateY(-12px) scale(1.4);
+    opacity:1;
+}
+   
+    100%{
+    transform:translateY(0) scale(1);
+}
+ 
+   }
+
+.hitball{
+    background:
+    radial-gradient(circle at 30% 30%,
+    #fff,
+    #ff4444,
+    #990000);
+
+    color:white;
+
+    box-shadow:
+    0 0 20px rgba(255,60,60,0.9);
+
+    border:2px solid #fff;
+}
+
+.bonusball{
+    background:
+    radial-gradient(circle at 30% 30%,
+    #ccffff,
+    #00ccff,
+    #0066ff);
+
+    color:white;
+
+    box-shadow:
+    0 0 20px rgba(0,200,255,0.9);
+
+    border:2px solid #fff;
+}
+
+
+.info{
+    font-size:15px;
+    color:#ddd;
+    margin-top:8px;
+}
+
+.notice{
+    margin-top:25px;
+    color:#ff9999;
+    font-size:14px;
+}
+
+.history{
+    font-size:16px;
+    text-align:left;
+    line-height:1.8;
+    color:#eee;
+}
+
+.copyMsg,.checkMsg{
+  color:#7CFC00;
+  font-weight:bold;
+  margin-bottom:18px;
+  margin-top:10px;
+  font-size:18px;
+  text-shadow:
+    0 0 5px #7CFC00,
+    0 0 10px #7CFC00,
+    0 0 8px #00ff99;
+  
+}
+
+
+@media(max-width:768px){
+
     h1{
-        font-size:28px;
+        font-size:30px;
+    }
+
+    .ball{
+        width:48px;
+        height:48px;
+        font-size:20px;
     }
 
     input,select{
         width:90%;
-        font-size:16px;
-    }
-
-    .box{
-        padding:15px;
-        margin:12px auto;
-    }
-
-    .ball{
-        width:44px;
-        height:44px;
-        font-size:18px;
-        margin:4px;
     }
 
     button{
         width:90%;
-        font-size:16px;
+    }
+}
+
+.fade-in{
+    animation:fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(20px);
     }
 
-    img{
-        max-width:90%;
-        height:auto;
+    to{
+        opacity:1;
+        transform:translateY(0);
     }
+}
+
+hr{
+    border:0;
+    border-top:1px solid #555;
+}
+
+@media screen and (max-width:600px){
+    body{padding:12px;}
+    h1{font-size:28px;}
+    input,select{width:90%;font-size:16px;}
+    .box{padding:15px;margin:12px auto;}
+    .ball{width:44px;height:44px;font-size:18px;margin:4px;}
+    button{width:90%;font-size:16px;}
+    .logo{max-width:90%;height:auto;}
+}
+.ticket-card{
+    background:linear-gradient(145deg,#202020,#111);
+    border:1px solid rgba(255,215,0,0.35);
+    border-radius:15px;
+    padding:15px;
+    margin-bottom:20px;
+    box-shadow:0 0 18px rgba(255,215,0,0.25);
+}
+.ticket-card h3 {
+  color: #ffd700;
+  margin-top: 0;
+}
+
+.ticket-numbers {
+  font-size: 28px;
+  font-weight: bold;
+  color:#ffd700;
+  text-shadow:0 0 10px rgba(255,215,0,0.6);
+  margin: 10px 0;
+  letter-spacing: 2px;
+}
+.main-btn{
+    font-size:24px;
+    padding:18px 40px;
+}
+.app-header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+
+    background:rgba(0,0,0,0.85);
+    /* backdrop-filter:blur(10px); */
+
+    padding:14px 10px;
+    margin:-25px -25px 25px -25px;
+
+    border-bottom:1px solid rgba(255,215,0,0.35);
+    box-shadow:0 0 18px rgba(255,215,0,0.25);
+}
+
+.app-title{
+    font-size:28px;
+    font-weight:bold;
+    color:#ffd700;
+    text-shadow:0 0 12px rgba(255,215,0,0.8);
+    animation: titlePulse 1.2s infinite alternate;
+    display:inline-block;
+}
+
+@keyframes titlePulse{
+
+  from{
+    transform:scale(1);
+    text-shadow:
+      0 0 12px rgba(255,215,0,0.8),
+      0 0 20px rgba(255,215,0,0.5);
+  }
+
+  to{
+    transform:scale(1.08);
+    text-shadow:
+      0 0 25px rgba(255,215,0,1),
+      0 0 50px rgba(255,215,0,0.9),
+      0 0 80px rgba(0,255,255,0.7);
+  }
+
+}
+
+.app-subtitle{
+    font-size:13px;
+    color:#ccc;
+    margin-top:4px;
+}
+.loading{
+    display:none;
+    margin:20px auto;
+    color:#ffd700;
+    font-weight:bold;
+    font-size:18px;
+    letter-spacing:2px;
+    text-shadow:0 0 10px rgba(255,215,0,0.8);
+    animation:pulse 1s infinite alternate;
+}
+
+.loading-bar{
+  width:100%;
+  height:18px;
+  background:#111;
+  border-radius:10px;
+  overflow:hidden;
+  margin-top:10px;
+}
+
+.loading-fill{
+  width:100%;
+  height:100%;
+  background:linear-gradient(90deg,#00ff99,#00ccff);
+  animation:none;
+  transition:width 0.6s ease;
+}
+
+@keyframes loadingAnim{
+  from{
+    width:0%;
+  }
+
+  to{
+    width:100%;
+  }
+}
+
+@keyframes pulse{
+    from{
+        opacity:0.5;
+    }
+    to{
+        opacity:1;
+    }
+} 
+
+@keyframes popIn{
+  0%{
+    transform:scale(0.5);
+    opacity:0;
+  }
+
+  70%{
+    transform:scale(1.2);
+    opacity:1;
+  }
+
+  100%{
+    transform:scale(1);
+  }
+}
+
+.pop-ball{
+  animation:popIn 0.4s ease;
+}
+
+.ticket-card{
+    background:#111;
+    border:2px solid #00ffcc;
+    border-radius:14px;
+    padding:15px;
+    margin-top:15px;
+    box-shadow:0 0 12px rgba(0,255,200,0.4);
+}
+
+.ticket-title{
+    font-size:20px;
+    font-weight:bold;
+    color:#00ffcc;
+    margin-bottom:10px;
+}
+
+.ai-gauge{
+    width:70%;
+    height:16px;
+    background:#222;
+    border-radius:20px;
+    margin:8px auto 14px;
+    overflow:hidden;
+    border:1px solid #444;
+}
+
+.ai-gauge-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#00ffcc,#ffe600,#ff4dff);
+    border-radius:20px;
+    box-shadow:0 0 12px #00ffcc;
+        animation:
+gaugeMove 2s ease forwards,
+pulseGlow 1.2s ease-in-out 3;
+
+}
+
+@keyframes gaugeMove{
+    from{
+        width:0%;
+    }
+    to{
+        width:96%;
+    }
+}
+
+@keyframes gaugePulse{
+    from{
+        filter:brightness(1);
+        box-shadow:0 0 10px #00ffcc;
+    }
+
+    to{
+        filter:brightness(1.5);
+        box-shadow:
+            0 0 18px #00ffcc,
+            0 0 35px #ff4dff;
+    }
+}
+
+#aiSummary{
+    margin:35px auto 20px;
+    padding:18px 24px;
+    width:80%;
+    max-width:780px;
+    color:#ffd700;
+    font-size:20px;
+    font-weight:bold;
+    line-height:1.7;
+    border:1px solid rgba(255,215,0,0.7);
+    border-radius:16px;
+    background:rgba(255,215,0,0.08);
+    box-shadow:
+      0 0 12px rgba(255,215,0,0.45),
+      0 0 25px rgba(255,215,0,0.25);
+    text-shadow:0 0 8px rgba(255,215,0,0.7);
+    display:none;
+}
+
+.hot-number{
+    color:#ffd700;
+    font-weight:bold;
+    text-shadow:0 0 8px #ffd700;
+}
+
+.chartTitle{
+    color:#00e5ff;
+    font-size:18px;
+    font-weight:bold;
+    margin-top:15px;
+    margin-bottom:8px;
+    text-shadow:0 0 10px #00e5ff;
+}
+
+.hot-fire{
+    color:#ff4444;
+    text-shadow:
+        0 0 8px #ff0000,
+        0 0 18px #ff6600,
+        0 0 30px #ff0000;
+    animation: fireGlow 1s infinite alternate;
+}
+
+@keyframes aiPulse{
+
+0%{
+transform:scale(1);
+filter:brightness(1);
+}
+
+100%{
+transform:scale(1.15);
+filter:brightness(1.8);
+}
+
+}
+
+.hot-fire{
+animation: aiPulse 0.8s infinite alternate;
+display:inline-block;
+}
+
+@keyframes fireGlow{
+    from{
+        transform:scale(1);
+    }
+
+    to{
+        transform:scale(1.15);
+    }
+}
+
+.rainbowWin{
+  font-weight:bold;
+  font-size:28px;
+  background:linear-gradient(90deg, red, orange, yellow, lime, cyan, blue, violet);
+  -webkit-background-clip:text;
+  color:transparent;
+  text-shadow:0 0 12px #fff;
+  animation:rainbowGlow 1s infinite alternate;
+}
+
+@keyframes rainbowGlow{
+  from{
+    filter:brightness(1);
+    transform:scale(1);
+  }
+  to{
+    filter:brightness(1.5);
+    transform:scale(1.08);
+  }
+}
+
+/* 1等専用・虹色超派手演出 */
+.first-prize-flash {
+  animation: rainbowFlash 1.2s infinite;
+  box-shadow: 0 0 35px gold, 0 0 70px #ff00ff;
+}
+
+@keyframes rainbowFlash {
+  0% { background: #ff004c; }
+  20% { background: #ffcc00; }
+  40% { background: #00ff88; }
+  60% { background: #00ccff; }
+  80% { background: #9933ff; }
+  100% { background: #ff004c; }
+}
+
+#firstPrizeEffect {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  text-align: center;
+  padding-top: 180px;
+  font-size: 44px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 15px gold, 0 0 30px red, 0 0 50px #00ffff;
+  animation: prizeGlow 0.8s infinite alternate;
+}
+
+@keyframes prizeGlow {
+  from { transform: scale(1); opacity: 0.85; }
+  to { transform: scale(1.08); opacity: 1; }
+}
+
+.confetti {
+  position: fixed;
+  top: -20px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  z-index: 10000;
+  animation: fallConfetti 3s linear forwards;
+}
+
+@keyframes fallConfetti {
+  to {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.recommend-ball-area{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:10px;
+  margin:14px 0;
+}
+
+.recommend-ball{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#fff7a8,#ffcc33);
+  color:#333;
+  font-weight:bold;
+  font-size:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 4px 10px rgba(0,0,0,0.25);
+  border:2px solid #fff3b0;
+}
+
+.rank-badge{
+  position:absolute;
+  top:-8px;
+  right:-8px;
+  background:#ff3366;
+  color:white;
+  font-size:11px;
+  font-weight:bold;
+  border-radius:12px;
+  padding:2px 6px;
+  box-shadow:0 0 8px rgba(255,80,120,0.8);
+}
+
+.recommend-wrap{
+  position:relative;
+  display:inline-flex;
+}
+
+@keyframes popIn{
+  0%{
+    transform:scale(0);
+    opacity:0;
+  }
+  70%{
+    transform:scale(1.15);
+    opacity:1;
+  }
+  100%{
+    transform:scale(1);
+  }
+}
+
+.recommend-wrap{
+  animation:popIn 0.5s ease;
+  animation-fill-mode:both;
+}
+
+.balance-fill{
+    height:100%;
+    border-radius:10px;
+    transition:width 1.2s ease;
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(
+90deg,
+#00f0ff,
+#00ff88,
+#ffee00,
+#ff8800,
+#ff00aa
+);
+
+background-size:300% 300%;
+
+animation:rainbowMove 4s linear infinite;
+}
+
+.balance-fill::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-40%;
+    width:40%;
+    height:100%;
+    background:rgba(255,255,255,0.85);
+    transform:skewX(-20deg);
+    animation:shineMove 2s infinite;
+}
+
+@keyframes shineMove{
+    0%{
+        left:-40%;
+    }
+    100%{
+        left:120%;
+    }
+}
+
+@keyframes rainbowMove{
+    0%{
+        background-position:0% 50%;
+    }
+    100%{
+        background-position:100% 50%;
+    }
+}
+
+.aiLoadingText{
+    font-size:20px;
+    font-weight:bold;
+    text-align:center;
+    margin-top:15px;
+    color:#00ffe1;
+    animation: glowText 1s infinite alternate;
+}
+
+@keyframes glowText{
+    from{
+        opacity:0.6;
+        text-shadow:0 0 5px #00ffe1;
+    }
+
+    to{
+        opacity:1;
+        text-shadow:
+        0 0 10px #00ffe1,
+        0 0 20px #00ffe1,
+        0 0 30px #00ffe1;
+    }
+}
+
+@keyframes pulseGlow{
+
+0%{
+    filter:brightness(1);
+    transform:scaleY(1);
+}
+
+50%{
+    filter:brightness(1.4);
+    transform:scaleY(1.08);
+}
+
+100%{
+    filter:brightness(1);
+    transform:scaleY(1);
+}
+
+}
+
+.hotChance{
+    text-align:center;
+    font-size:26px;
+    font-weight:bold;
+    transition: opacity 0.6s ease;
+    color:#ffdd00;
+    margin:20px auto;
+    text-shadow:
+    0 0 10px #ff0000,
+    0 0 20px #ff9900,
+    0 0 35px #ffff00;
+    animation: hotShake 0.25s infinite alternate;
+    display:none;
+}
+
+#hotNumber{
+    transition: opacity 0.6s ease;
+}
+
+@keyframes hotShake{
+    from{
+        transform:scale(1) rotate(-1deg);
+    }
+    to{
+        transform:scale(1.08) rotate(1deg);
+    }
+}
+
+.vipMode{
+  color:#ffd700;
+  font-weight:bold;
+  animation: vipGlow 1.2s infinite alternate;
+}
+
+@keyframes vipGlow{
+
+  from{
+    text-shadow:0 0 5px #ffd700;
+    opacity:0.7;
+  }
+
+  to{
+    text-shadow:
+      0 0 10px #ffd700,
+      0 0 20px #ff9900,
+      0 0 30px #ffcc00;
+
+    opacity:1;
+  }
+}
+
+.aiRank{
+  font-size:32px;
+  font-weight:bold;
+  color:#ffdd00;
+  text-align:center;
+  margin-bottom:15px;
+
+  text-shadow:
+    0 0 10px #ffdd00,
+    0 0 20px #ff9900,
+    0 0 40px #ff6600;
+
+  animation: rankGlow 1s infinite alternate;
+}
+
+@keyframes rankGlow{
+
+  from{
+    transform:scale(1);
+    opacity:0.8;
+  }
+
+  to{
+    transform:scale(1.05);
+    opacity:1;
+  }
+}
+
+.super-hot-number{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  margin-top:8px;
+  background:radial-gradient(circle at 30% 25%, #fff7b0, #ffd700, #ff8c00);
+  color:#111;
+  font-size:30px;
+  font-weight:bold;
+  border:3px solid #fff3b0;
+  box-shadow:
+    0 0 15px #ffd700,
+    0 0 35px #ff9900,
+    0 0 60px #ff3300;
+  animation: superHotPulse 0.8s infinite alternate;
+}
+
+@keyframes superHotPulse{
+  from{
+    transform:scale(1);
+    filter:brightness(1);
+  }
+  to{
+    transform:scale(1.18);
+    filter:brightness(1.5);
+  }
+}
+
+.super-hot-reason{
+  margin-top:10px;
+  color:#fff;
+  font-size:16px;
+  font-weight:bold;
+  text-shadow:0 0 8px #ff9900;
+}
+
+.premiumModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:rgba(0,0,0,0.82);
+  align-items:center;
+  justify-content:center;
+}
+
+.premiumModalBox{
+  width:90%;
+  max-width:520px;
+  padding:20px 18px;
+  border-radius:22px;
+  background:linear-gradient(145deg,#1b1b1b,#050505);
+  border:2px solid gold;
+  box-shadow:0 0 25px gold,0 0 60px rgba(255,215,0,0.45);
+  text-align:center;
+  color:white;
+  max-height:90vh;
+  overflow-y:auto;
+}
+
+.premiumModalBox h2{
+  color:#ffd700;
+  font-size:28px;
+  margin:8px 0 14px;
+  text-shadow:0 0 12px gold;
+  animation: strongGlow 1s infinite alternate;
+}
+
+
+.premiumPrice{
+  display:inline-block;
+  font-size:34px;
+  font-weight:bold;
+  color:#111;
+  margin:18px 0;
+  padding:10px 24px;
+  border-radius:999px;
+
+  background:linear-gradient(
+    90deg,
+    #ffd700,
+    #ff9900,
+    #ffd700
+  );
+
+  box-shadow:
+    0 0 15px gold,
+    0 0 35px orange;
+
+  animation: strongGlow 1s infinite alternate;
+}
+
+
+.premiumList{
+  line-height:1.9;
+  font-size:17px;
+  margin:18px 0;
+}
+
+.premiumClose{
+  background:#555;
+  color:white;
+  
+}
+
+.premiumRegisterBtn{
+  background:linear-gradient(90deg,#ffd700,#ff9900);
+  color:#111;
+  font-size:20px;
+  padding:14px 24px;
+  border-radius:14px;
+  box-shadow:0 0 18px gold,0 0 35px orange;
+  animation: strongGlow 1s infinite alternate;
+}
+
+
+.premiumRegisterBtn span{
+  font-size:14px;
+}
+
+.premiumBadge{
+  
+  background:#ff3300;
+  color:white;
+  font-weight:bold;
+  padding:6px 14px;
+  border-radius:999px;
+  margin-bottom:12px;
+  box-shadow:0 0 15px red;
+  animation: strongGlow 1s infinite alternate;
+  display:block;
+  width:fit-content;
+  margin:0 auto 12px;
+}
+
+.futureFeatures{
+color:#00ffcc;
+font-size:15px;
+line-height:1.8;
+margin:4px 0;
+text-shadow:0 0 8px #00ffcc;
+}
+
+.memberStatus{
+  display:inline-block;
+  margin-top:10px;
+  padding:6px 14px;
+  border-radius:999px;
+
+  background:linear-gradient(
+    90deg,
+    #00ccff,
+    #00ff99
+  );
+
+  color:#111;
+  font-size:14px;
+  font-weight:bold;
+
+  box-shadow:
+    0 0 10px #00ffcc,
+    0 0 20px #00ccff;
+}
+
+.growthStatus{
+  margin-top:8px;
+  color:#ffcc00;
+  font-size:14px;
+  font-weight:bold;
+
+  text-shadow:
+    0 0 8px #ff9900,
+    0 0 16px #ff3300;
+
+  animation: strongGlow 1s infinite alternate;
+}
+
+
+html, body{
+  overflow-x:hidden;
+}
+
+.memberStatus.premium{
+  background:linear-gradient(
+    90deg,
+    #ffd700,
+    #ff9900,
+    #ffd700
+  );
+
+  color:#111;
+
+  box-shadow:
+    0 0 15px gold,
+    0 0 30px orange,
+    0 0 50px gold;
+
+  animation: strongGlow 1s infinite alternate;
+}
+
+
+body.premiumAura::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+
+  background:
+    radial-gradient(circle at 50% 12%,
+      rgba(255,215,0,0.22),
+      transparent 35%),
+    radial-gradient(circle at 20% 80%,
+      rgba(255,165,0,0.16),
+      transparent 30%),
+    radial-gradient(circle at 80% 70%,
+      rgba(255,215,0,0.14),
+      transparent 32%);
+
+  animation: premiumAuraGlow 3s infinite alternate;
+}
+
+@keyframes premiumAuraGlow{
+  from{
+    opacity:0.45;
+    filter:brightness(1);
+  }
+
+  to{
+    opacity:0.85;
+    filter:brightness(1.35);
+  }
+}
+
+
+
+
+.premiumModeEffect{
+  margin:18px auto;
+  padding:14px 18px;
+  width:82%;
+  border-radius:16px;
+  font-size:24px;
+  font-weight:bold;
+  color:#ffd700;
+  background:rgba(255,215,0,0.12);
+  border:2px solid gold;
+  box-shadow:
+    0 0 18px gold,
+    0 0 40px orange,
+    0 0 65px gold;
+  text-shadow:
+    0 0 10px gold,
+    0 0 20px orange;
+  animation: strongGlow 1s infinite alternate;
+}
+
+
 </style>
-}</head>
+
+</head>
 
 <body>
 
-<img src="logo.png" width="420">
-<h1>NEXTロト研究所</h1>
-<div class="box">
-<h2>NEXTロト研究所とは？</h2>
-<div class="box">
+<div id="premiumModal" class="premiumModal">
 
-<h2>使い方</h2>
+<div class="premiumModalBox">
 
-<p>
-① 前回当選数字を入力
-</p>
+<h2>🔒 プレミアム限定機能</h2>
 
-<p>
-② 安定型 or 攻め型を選択
-</p>
+<div class="premiumPrice">
+月額500円
+</div>
 
-<p>
-③ 必要ならキャリーオーバーモードON
-</p>
+<div class="premiumList">
 
-<p>
-④ 「予想する」を押す
-</p>
+👑 プレミアム会員限定<br><br>
 
-<p>
-⑤ コピー機能で数字を保存
-</p>
+✅ 過去50回ランキング分析<br>
+✅ 過去30回ランキング分析<br>
+✅ 直近10回急上昇分析<br>
+✅ AIおすすめ数字TOP5<br>
+✅ AI分析コメント<br>
+✅ 強モード<br><br>
 
-<p>
-⑥ 抽選後に当選数字を入力して照合
-</p>
+🚀 今後追加されるAI機能も利用可能<br><br>
+
+<div class="futureFeatures">
+🤖 AIトレンド分析<br>
+📈 出現予測ランキング<br>
+🔥 激熱数字通知<br>
+🎯 AIおすすめ数字強化版<br>
+🏆 プレミアム限定予想モード
+</div>
+<br>
+
+<div id="premiumStatusText">
+⭐ 月額500円ですべて利用可能
+</div>
+
 
 </div>
 
-<p>
-NEXTロト研究所は、ロト6の予想を楽しむための研究型アプリです。
-</p>
 
-<p>
-前回当選数字、引っ張り数字、下一桁一致、連続数字、キャリーオーバーなどを考慮して、
-独自条件で予想数字を生成します。
-</p>
+<div class="premiumBadge">
+🔥 人気急上昇
+</div>
 
-<p>
-安定型と攻め型を切り替えることで、バランス重視・攻め重視の予想を使い分けできます。
-</p>
 
-<p style="color:#ff9999;">
-※このアプリは当選を保証するものではありません。予想を楽しむための補助ツールです。
-</p>
+<button id="premiumRegisterBtn" class="premiumRegisterBtn" onclick="registerPremium()">
+🚀 今すぐプレミアム登録<br>
+<span>月額500円で全機能解放</span>
+</button>
+
+
+<button
+class="premiumClose"
+onclick="closePremiumModal()">
+
+閉じる
+
+</button>
+
+
+
+</div>
+</div>
+
+
+<div id="firstPrizeEffect">
+  🎉 1等大当たり!! 🎉
+</div>
+<header class="app-header">
+    <div class="app-title">NEXTロト研究所</div>
+    <div class="app-subtitle">AI風ロト予想Webアプリ</div>
+    <div id="memberStatus" class="memberStatus">
+        FREE PLAN
+    </div>
+
+    <div class="growthStatus">
+       🔥 利用者急増中
+    </div>
+
+<button onclick="openPremiumModal()" style="font-size:12px;padding:6px 12px;">
+確認用：プレミアム画面
+</button>
+
+
+</header>
+
+<img src="logo.png" class="logo" alt="NEXTロト研究所ロゴ">
+
+<h1>NEXTロト研究所</h1>
+
+<div class="box fade-in"><h2>NEXTロト研究所とは？</h2>
+<p>NEXTロト研究所は、ロト6の予想を楽しむための研究型アプリです。</p>
+<p>前回当選数字、引っ張り数字、下一桁一致、連続数字、キャリーオーバーなどを考慮して、独自条件で予想数字を生成します。</p>
+<p>安定型と攻め型を切り替えることで、バランス重視・攻め重視の予想を使い分けできます。</p>
+<p style="color:#ff9999;">※このアプリは当選を保証するものではありません。予想を楽しむための補助ツールです。</p>
+</div>
+
+<div class="box">
+<h2>使い方</h2>
+<p>① 前回当選数字を入力</p>
+<p>② 安定型 or 攻め型を選択</p>
+<p>③ 必要ならキャリーオーバーモードON</p>
+<p>④ 「予想する」を押す</p>
+<p>⑤ コピー機能で数字を保存</p>
+<p>⑥ 抽選後に当選数字を入力して照合</p>
 </div>
 
 <div class="box">
@@ -117,30 +1571,101 @@ NEXTロト研究所は、ロト6の予想を楽しむための研究型アプリ
 <p>
 <select id="mode">
 <option value="stable">安定型</option>
+<option value="balance">バランス型</option>
 <option value="attack">攻め型</option>
+<option value="premium">👑 プレミアム予想</option>
 </select>
 </p>
 
-<p>
+<p style="color:#bbb; font-size:14px; line-height:1.6;">
+安定型：無理の少ない安定寄りの予想<br>
+バランス型：安定と攻めの中間を狙う予想<br>
+攻め型：高数字や流れを強めに狙う予想<br>
+👑 プレミアム予想：過去分析・AI注目数字・強モード要素を強めに反映する会員限定予想
+</p>
+
+
 <label><input type="checkbox" id="carryMode"> キャリーオーバーモードON</label>
 </p>
 
-<button onclick="generateLoto()">予想する</button>
+
+<div id="modeView"
+style="margin-top:12px;color:#00ffcc;font-weight:bold;font-size:18px;">
+現在モード：安定型
+</div>
+
+<div class="option-box">
+
+<h3>🎛 予想オプション</h3>
+
+<label class="option-item">
+<input type="checkbox" id="useConsecutive" checked>
+<span>連続数字を入れる</span>
+</label>
+
+<label class="option-item">
+<input type="checkbox" id="useLastDigit" checked>
+<span>下一桁一致を入れる</span>
+</label>
+
+<label class="option-item">
+<input type="checkbox" id="usePull">
+<span>引っ張り数字を入れる</span>
+</label>
+
+<label class="option-item">
+<input type="checkbox" id="highRisk">
+<span>高額狙いモード</span>
+</label>
+
+</div>
+
+<button id="startBtn" class="main-btn" onclick="generateLoto()">🎯 予想スタート</button>
+<div class="hotChance" id="hotChance">
+🔥 激熱予想モード発動！
+</div>
+<div class="aiLoadingText" id="aiLoadingText">
+AI解析待機中...
+</div>
+
+<div id="aiPercent"
+style="
+font-size:24px;
+font-weight:bold;
+color:#00ffcc;
+margin-top:8px;
+display:none;
+">
+0%
+</div>
+
+<div id="hotNumber"></div>
+
+<div id="loading" class="loading">AIが過去データ解析中...</div>
+<div class="loading-bar">
+  <div id="loadingFill" class="loading-fill"></div>
 </div>
 
 <div class="box">
 <h2>今回の予想</h2>
 
-<h3>1口目</h3>
-<div id="result1"></div>
-<div class="info" id="info1"></div>
-<button onclick="copyTicket(1)">1口目をコピー</button>
+<div class="ticket-card">
+  <h3>🎯 1口目</h3>
+  <div id="result1" class="ticket-numbers"></div>
+  <div class="info" id="info1"></div>
+  <button onclick="copyTicket(1)">1口目をコピー</button>
+</div>
 
-<h3>2口目</h3>
-<div id="result2"></div>
-<div class="info" id="info2"></div>
-<button onclick="copyTicket(2)">2口目をコピー</button>
-
+<div class="ticket-card">
+  <h3>🎯 2口目</h3>
+ <div id="result2" class="ticket-numbers"></div>
+ <div id="aiSummary"></div>
+ <div id="boostApplied"></div>
+ <div id="superBoost"></div>
+ <div id="carryBoost"></div>
+ <div class="info" id="info2"></div>
+  <button onclick="copyTicket(2)">2口目をコピー</button>
+</div>
 <br>
 <button onclick="copyBothTickets()">2口まとめてコピー</button>
 <div class="copyMsg" id="copyMsg"></div>
@@ -150,15 +1675,75 @@ NEXTロト研究所は、ロト6の予想を楽しむための研究型アプリ
 <h2>当選結果と照合</h2>
 <p>当選数字を入力してください</p>
 <input id="winningNumbers" placeholder="例：01 02 04 05 08 38">
+<input id="bonusNumber" placeholder="ボーナス数字 例：12">
 <br>
 <button onclick="checkLatestResult()">今回の予想と照合</button>
 <button onclick="checkSavedHistory()">保存履歴すべてと照合</button>
+<button onclick="clearCheckResult()">照合結果クリア</button>
 <div class="checkMsg" id="checkMsg"></div>
 </div>
+
+<div class="box" id="pastAnalysisBox">
+<h2>過去当選データ分析</h2>
+
+<p style="color:#00ffcc;font-size:14px;line-height:1.8;margin-top:10px;">
+
+📊 過去データ分析について<br>
+
+入力された過去当選データから出現回数の多い数字を分析します。<br>
+
+AIおすすめ数字として上位5個を抽出し、
+予想生成時に参考データとして利用します。<br>
+
+※上位数字だけで予想するわけではありません。<br>
+ランダム要素や数字バランスも考慮します。
+
+</p>
+
+<p>過去の当選数字を入力してください</p>
+<p style="color:#bbb;font-size:14px;">
+例：01 05 12 23 34 40<br>
+1回分ごとに改行してください
+</p>
+
+<div id="pastAnalysisInputArea">
+
+<textarea id="pastData" rows="6" style="width:90%;font-size:16px;border-radius:10px;padding:12px;"></textarea>
+<br>
+
+<button onclick="handlePastAnalysis()">
+過去データを分析
+</button>
+
+<button onclick="clearPastAnalysis()">過去データ分析を削除</button>
+
+<div id="pastAnalysis" style="margin-top:18px;font-size:18px;line-height:1.8;font-weight:bold;"></div>
+
+<div class="pastPowerBox">
+  <div class="pastPowerTitle">📊 過去分析影響度</div>
+
+  <button onclick="handlePastPower('weak')">弱</button>
+<button onclick="handlePastPower('normal')">標準</button>
+<button onclick="handlePastPower('strong')">強</button>
+
+  <div id="pastPowerStatus">現在：標準</div>
+</div>
+
+<div id="boostActiveMsg"></div>
+
+</div>
+
 
 <div class="box">
 <h2>保存された予想履歴</h2>
 <button onclick="clearHistory()">履歴を全部削除</button>
+
+</div>
+
+<div id="historyStats"></div>
+<div id="numberRanking"></div>
+<div id="aiRecommend"></div>
+<div id="aiComment"></div>
 <div class="history" id="history">まだ履歴はありません。</div>
 </div>
 
@@ -168,7 +1753,187 @@ NEXTロト研究所は、ロト6の予想を楽しむための研究型アプリ
 </div>
 
 <script>
+
+document.addEventListener("copy", function(e){
+    const selectedText = window.getSelection().toString();
+
+    if(selectedText){
+        e.clipboardData.setData("text/plain", selectedText);
+        e.preventDefault();
+    }
+});
+
 let historyList = [];
+
+let isPremiumUser = false;
+
+localStorage.removeItem("isPremiumUser");
+localStorage.removeItem("lastFreeUseDate");
+
+function updateMemberStatus(){
+
+    const memberStatus = document.getElementById("memberStatus");
+    const premiumBtn = document.getElementById("premiumRegisterBtn");
+    const premiumStatusText = document.getElementById("premiumStatusText");
+
+    if(!memberStatus) return;
+
+    if(isPremiumUser){
+
+        memberStatus.innerText = "👑 PREMIUM MEMBER";
+        memberStatus.classList.add("premium");
+        document.body.classList.add("premiumAura");
+
+
+        if(premiumBtn){
+            premiumBtn.innerHTML =
+            "👑 プレミアム会員登録済み<br><span>全機能をご利用いただけます</span>";
+        }
+
+        if(premiumStatusText){
+            premiumStatusText.innerHTML =
+            "👑 PREMIUM MEMBER<br>すべてのプレミアム機能が利用可能です";
+        }
+
+    }else{
+
+        memberStatus.innerText = "🆓 FREE PLAN";
+        memberStatus.classList.remove("premium");
+        document.body.classList.remove("premiumAura");
+
+
+        if(premiumBtn){
+            premiumBtn.innerHTML =
+            "🚀 今すぐプレミアム登録<br><span>月額500円で全機能解放</span>";
+        }
+
+        if(premiumStatusText){
+            premiumStatusText.innerHTML =
+            "⭐ 月額500円ですべて利用可能";
+        
+        
+        }
+    }
+    applyPremiumVisibility();
+}
+
+function applyPremiumVisibility(){
+
+    const premiumOnlyIds = [
+        "pastAnalysis",
+        "numberRanking",
+        "aiRecommend",
+        "aiComment",
+        "boostActiveMsg"
+    ];
+
+    premiumOnlyIds.forEach(id => {
+        const el = document.getElementById(id);
+        if(el){
+            el.style.display = isPremiumUser ? "block" : "none";
+
+            if(!isPremiumUser){
+                el.innerHTML = "";
+            }
+        }
+    });
+
+   const pastPowerBox = document.querySelector(".pastPowerBox");
+if(pastPowerBox){
+    pastPowerBox.style.display = "block";
+}
+
+    const pastData = document.getElementById("pastData");
+
+if(pastData){
+    pastData.style.display =
+    isPremiumUser ? "block" : "none";
+}
+
+}
+
+
+function registerPremium(){
+
+
+    isPremiumUser = true;
+    localStorage.setItem("isPremiumUser","true");
+    updateMemberStatus();
+    closePremiumModal();
+   alert(
+"🚧 プレミアム会員登録（決済機能）は現在準備中です。\n\n" +
+"正式リリース後、月額500円で利用可能になります。\n\n" +
+"現在は開発テスト版のため、自動でPREMIUM MEMBERへ切り替わります。"
+);
+
+}
+
+
+let pastPower = localStorage.getItem("pastPower") || "normal";
+
+function setPastPower(power) {
+  pastPower = power;
+  localStorage.setItem("pastPower", power);
+
+  const text =
+    power === "weak" ? "弱" :
+    power === "strong" ? "強" :
+    "標準";
+
+  const status = document.getElementById("pastPowerStatus");
+
+  const boostMsg = document.getElementById("boostActiveMsg");
+
+  const powerBox = document.querySelector(".pastPowerBox");
+
+powerBox.classList.remove("strongMode");
+
+if(power === "strong"){
+    powerBox.classList.add("strongMode");
+
+    if(boostMsg){
+
+    if(isPremiumUser){
+        boostMsg.innerHTML = "🔥 過去分析ブースト発動中";
+        boostMsg.style.display = "block";
+    }else{
+        boostMsg.innerHTML = "";
+        boostMsg.style.display = "none";
+    }
+
+}
+
+
+}else{
+
+    if(boostMsg){
+        boostMsg.innerHTML = "";
+        boostMsg.style.display = "none";
+    }
+
+}
+
+
+  if(status){
+
+    if(!isPremiumUser){
+        status.textContent = "現在：🔒 プレミアム限定";
+        return;
+    }
+
+    if(power === "strong"){
+        status.textContent = "現在：強 🔥 上位数字を積極採用中";
+    }
+    else if(power === "weak"){
+        status.textContent = "現在：弱 📉 参考程度";
+    }
+    else{
+        status.textContent = "現在：標準 ⚖️ バランス型";
+    }
+}
+
+}
+
 let currentTicket1 = [];
 let currentTicket2 = [];
 
@@ -176,10 +1941,13 @@ function pad(n){
     return String(n).padStart(2,"0");
 }
 
-function balls(numbers, hits=[]){
+function balls(numbers, hits=[], bonus=null){
     return numbers.map(n => {
-        let cls = hits.includes(n) ? "ball hitball" : "ball";
-        return "<span class='" + cls + "'>" + pad(n) + "</span>";
+        let cls =
+    hits.includes(n) ? "ball hitball" :
+    n === bonus ? "ball bonusball" :
+    "ball";
+        return `<span class="` + cls + ` pop-ball">` + pad(n) + `</span>`;
     }).join("");
 }
 
@@ -234,24 +2002,175 @@ function countOdd(numbers){
 }
 
 function createTicket(lastNumbers, needConsecutive, carryMode, mode){
+
+    let analysisTopNumbers = [];
+
+    try {
+        analysisTopNumbers = JSON.parse(localStorage.getItem("analysisTopNumbers")) || [];
+    } catch (e) {
+        analysisTopNumbers = [];
+    }
+
+    if(!isPremiumUser){
+    analysisTopNumbers = [];
+}
+
+    let middleTopNumbers = [];
+
+try {
+    middleTopNumbers = JSON.parse(localStorage.getItem("middleTopNumbers")) || [];
+} catch (e) {
+    middleTopNumbers = [];
+}
+
+    if(!isPremiumUser){
+    middleTopNumbers = [];
+}
+
+
+    let recentTopNumbers = [];
+
+try {
+    recentTopNumbers = JSON.parse(localStorage.getItem("recentTopNumbers")) || [];
+} catch (e) {
+    recentTopNumbers = [];
+}
+
+
+    if(!isPremiumUser){
+    recentTopNumbers = [];
+}
+
+
+let combinedTopNumbers = [
+    ...analysisTopNumbers,
+    ...middleTopNumbers,
+    ...recentTopNumbers
+];
+
+combinedTopNumbers = [...new Set(combinedTopNumbers)];
+
+
+
     let tries = 0;
 
     while(tries < 30000){
         tries++;
 
         let numbers = [];
-        let pull = lastNumbers[Math.floor(Math.random() * lastNumbers.length)];
-        numbers.push(pull);
 
+let analysisUseCount = 0;
+
+const effectivePastPower =
+mode === "premium"
+? "strong"
+: pastPower;
+
+
+if (analysisTopNumbers.length > 0) {
+    if (effectivePastPower === "weak"){
+        analysisUseCount = Math.random() < 0.35 ? 1 : 0;
+   } else if (effectivePastPower === "strong") {
+    analysisUseCount = 2;
+
+
+    if (
+    middleTopNumbers.length > 0 &&
+    Math.random() < (
+        mode === "premium"
+        ? 0.45
+        : 0.3
+    )
+){
+    analysisTopNumbers.push(
+        middleTopNumbers[
+            Math.floor(
+                Math.random() * middleTopNumbers.length
+            )
+        ]
+    );
+} 
+
+   
+   if (
+    recentTopNumbers.length > 0 &&
+    Math.random() < (
+        mode === "premium"
+        ? 0.35
+        : 0.2
+    )
+){
+    analysisTopNumbers.push(
+        recentTopNumbers[
+            Math.floor(
+                Math.random() * recentTopNumbers.length
+            )
+        ]
+    );
+}
+
+} else {
+        analysisUseCount = 1;
+    }
+}
+
+
+        let pull = lastNumbers[Math.floor(Math.random() * lastNumbers.length)];
+
+if (!numbers.includes(pull)) {
+    numbers.push(pull);
+}
+        
         while(numbers.length < 6){
-            let num = Math.floor(Math.random() * 43) + 1;
+            let num;
+
+if (analysisUseCount > 0 && combinedTopNumbers.length > 0 && numbers.length < 6) {
+    
+    let candidates = combinedTopNumbers.filter(n =>
+    !lastNumbers.includes(n)
+);
+
+    if (candidates.length > 0) {
+        num = candidates[Math.floor(Math.random() * candidates.length)];
+    } else {
+        num = Math.floor(Math.random() * 43) + 1;
+    }
+
+    analysisUseCount--;
+} else {
+
+    num = Math.floor(Math.random() * 43) + 1;
+}
 
             if(!carryMode && num === 41) continue;
             if(!numbers.includes(num)) numbers.push(num);
         }
 
         numbers.sort((a,b)=>a-b);
+   
+       
+        let allAnalysisNumbers = [
+    ...analysisTopNumbers,
+    ...middleTopNumbers,
+    ...recentTopNumbers
+];
 
+allAnalysisNumbers = [...new Set(allAnalysisNumbers)];
+
+let analysisHitCount =
+numbers.filter(n =>
+    allAnalysisNumbers.includes(n)
+).length;
+
+if(isPremiumUser && effectivePastPower === "strong" && analysisHitCount !== 2) continue;
+if(isPremiumUser && pastPower === "strong" && numbers.includes(42) && Math.random() < 0.75) continue;
+if(isPremiumUser && pastPower === "strong" && numbers.includes(1) && Math.random() < 0.35) continue;
+if(isPremiumUser && pastPower === "strong" && numbers.includes(43) && Math.random() < 0.75) continue;
+if(isPremiumUser && pastPower === "strong" && numbers.includes(40) && Math.random() < 0.35) continue;
+if(isPremiumUser && pastPower === "strong" && numbers.includes(24) && Math.random() < 0.25) continue;
+if(isPremiumUser && pastPower === "strong" && numbers.includes(18) && Math.random() < 0.2) continue;
+
+if(isPremiumUser && pastPower !== "strong" && analysisHitCount >= 4) continue;
         if(numbers[0] < 1 || numbers[0] > 9) continue;
         if(countPullNumbers(numbers,lastNumbers) !== 1) continue;
         if(getLastDigitPairCount(numbers) !== 1) continue;
@@ -269,9 +2188,21 @@ function createTicket(lastNumbers, needConsecutive, carryMode, mode){
             if(odd === 0 || odd === 6) continue;
         }
 
-        if(mode === "attack"){
-            if(carryMode && high < 2) continue;
-        }
+        if(mode === "balance"){
+    if(low >= 6) continue;
+    if(high === 0) continue;
+}
+
+
+       if(carryMode){
+    if(high < 2) continue;
+    if(!numbers.some(n => n >= 40)) continue;
+}
+
+if(mode === "attack"){
+    if(high < 2) continue;
+}
+
 
         return numbers;
     }
@@ -293,6 +2224,168 @@ function loadHistory(){
 
 function renderHistory(){
     let area = document.getElementById("history");
+    document.getElementById("historyStats").innerHTML =
+    "📊 保存履歴：" + historyList.length + "件";
+
+    if(!isPremiumUser){
+    document.getElementById("numberRanking").innerHTML = "";
+    document.getElementById("aiRecommend").innerHTML = "";
+    document.getElementById("aiComment").innerHTML = "";
+
+    document.getElementById("numberRanking").style.display = "none";
+    document.getElementById("aiRecommend").style.display = "none";
+    document.getElementById("aiComment").style.display = "none";
+}else{
+    document.getElementById("numberRanking").style.display = "block";
+    document.getElementById("aiRecommend").style.display = "block";
+    document.getElementById("aiComment").style.display = "block";
+}
+
+
+    let allNumbers = [];
+
+    historyList.forEach(item => {
+    allNumbers.push(...item.ticket1);
+    allNumbers.push(...item.ticket2);
+});
+
+   let counts = {};
+
+   allNumbers.forEach(num => {
+    counts[num] = (counts[num] || 0) + 1;
+});
+
+   let ranking = Object.entries(counts)
+   .sort((a,b) => b[1] - a[1])
+   .slice(0,5);
+
+ 
+
+  document.getElementById("numberRanking").innerHTML =
+"🔥 よく出る数字<br>" +
+ranking.map((r,i)=>
+`${i+1}位：${pad(r[0])}（${r[1]}回）`
+).join("<br>");
+
+
+let analysisTopNumbers = JSON.parse(localStorage.getItem("analysisTopNumbers")) || [];
+let middleTopNumbers = JSON.parse(localStorage.getItem("middleTopNumbers")) || [];
+let recentTopNumbers = JSON.parse(localStorage.getItem("recentTopNumbers")) || [];
+
+
+let scoreMap = {};
+
+analysisTopNumbers.forEach((n, i) => {
+    scoreMap[n] = (scoreMap[n] || 0) + (5 - i);
+});
+
+middleTopNumbers.forEach((n, i) => {
+    scoreMap[n] = (scoreMap[n] || 0) + (7 - i);
+});
+
+recentTopNumbers.forEach((n, i) => {
+    scoreMap[n] = (scoreMap[n] || 0) + (10 - i);
+});
+
+let recommend = Object.entries(scoreMap)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(r => pad(r[0]));
+
+
+
+function getReason(num){
+
+if(recentTopNumbers.includes(Number(num))){
+    return "10回急上昇";
+}
+
+if(middleTopNumbers.includes(Number(num))){
+    return "30回ランキング上位";
+}
+
+if(analysisTopNumbers.includes(Number(num))){
+    return "50回ランキング上位";
+}
+
+return "AI分析注目数字";
+
+}
+
+const reasonList = [
+"最近の出現率が高い",
+"引っ張り数字候補",
+"高数字トレンド",
+"連続数字候補",
+"AIが強く注目",
+"下一桁一致候補"
+];
+
+const isLatestPremium =
+historyList.length > 0 &&
+historyList[0].modeName.includes("プレミアム");
+
+document.getElementById("aiRecommend").innerHTML =
+
+(isLatestPremium
+? "👑 PREMIUM TOP5<br>"
+: "🤖 AI注目数字<br>")
+
++
+(isLatestPremium
+ ? "<div style='font-size:12px;color:#ffd700;margin-bottom:12px;'>30回ランキング＋10回急上昇を強化反映</div>"
+ : "")
+
++
+
+`<div class="recommend-ball-area">` +
+
+recommend.map((n,i) =>
+
+`<span class="recommend-wrap" style="animation-delay:${i * 0.2}s">` +
+
+`<span class="recommend-ball">${n}</span>` +
+
+`<div style="
+font-size:14px;
+margin-top:10px;
+color:#fff;
+line-height:1.4;
+">` +
+
+`${getReason(n)}` +
+`</div>` +
+
+`<span class="rank-badge">${i + 1}位</span>` +
+
+`</span>`
+
+).join("")
++
+
+`</div>`;
+
+let aiCommentText = "";
+
+if(recommend.length >= 5){
+    aiCommentText += "📊 上位5数字を総合分析しました。<br>";
+}
+
+if(recentTopNumbers.length > 0){
+    aiCommentText += "🔥 直近10回の急上昇数字を重視しています。<br>";
+}
+
+if(middleTopNumbers.length > 0){
+    aiCommentText += "📈 30回ランキングの流れも反映しています。<br>";
+}
+
+if(analysisTopNumbers.length > 0){
+    aiCommentText += "🏆 50回ランキング上位数字も考慮しています。";
+}
+
+document.getElementById("aiComment").innerHTML =
+"💬 AI分析コメント<br>" + aiCommentText;
+
 
     if(historyList.length === 0){
         area.innerHTML = "まだ履歴はありません。";
@@ -332,17 +2425,26 @@ function clearHistory(){
 
 function copyText(text){
     navigator.clipboard.writeText(text).then(function(){
-        document.getElementById("copyMsg").innerHTML = "コピーしました";
+
+        const copyMsg = document.getElementById("copyMsg");
+        copyMsg.innerHTML = "コピーしました";
+
+        setTimeout(() => {
+            copyMsg.innerHTML = "";
+        }, 2500);
+
     }).catch(function(){
         alert("コピーに失敗しました。");
     });
 }
+
 
 function copyTicket(num){
     if(num === 1 && currentTicket1.length > 0){
         copyText(currentTicket1.map(pad).join(" ・ "));
     }else if(num === 2 && currentTicket2.length > 0){
         copyText(currentTicket2.map(pad).join(" ・ "));
+   
     }else{
         alert("先に予想してください。");
     }
@@ -362,14 +2464,186 @@ function copyBothTickets(){
 }
 
 function generateLoto(){
+
+
+
+let analysisTopNumbers = [];
+
+try {
+    analysisTopNumbers =
+    JSON.parse(localStorage.getItem("analysisTopNumbers")) || [];
+} catch (e) {
+    analysisTopNumbers = [];
+}
+
+if(window.isGenerating){
+    return;
+}
+
+window.isGenerating = true;
+
+document.getElementById("startBtn").classList.add("generating");
+
+document.getElementById("aiLoadingText").innerText = "AI解析中...";
+
+document.getElementById("aiLoadingText").style.display = "block";
+
+document.getElementById("aiPercent").style.display = "block";
+document.getElementById("aiPercent").innerText = "0%";
+
+if(window.aiPercentInterval){
+    clearInterval(window.aiPercentInterval);
+}
+
+let percent = 0;
+
+window.aiPercentInterval = setInterval(() => {
+
+percent += Math.floor(Math.random() * 8) + 1;
+
+if(percent > 100){
+percent = 100;
+}
+
+document.getElementById("aiPercent").innerText =
+percent + "%";
+
+}, 180);
+
+
+if(window.aiLoadingInterval){
+clearInterval(window.aiLoadingInterval);
+
+}
+
+if(window.aiLoadingHideTimer){
+clearTimeout(window.aiLoadingHideTimer);
+}
+
+const hotChance = Math.random() < 0.2;
+
+const hotMessages = [
+"🔥 激熱予想モード発動！",
+"🌈 レインボーチャンス！",
+"⚡ 超解析モード！",
+"👑 AI覚醒中！",
+"🚨 高期待値ゾーン突入！"
+];
+
+if(hotChance){
+
+document.getElementById("hotChance").innerText =
+hotMessages[Math.floor(Math.random() * hotMessages.length)];
+
+document.getElementById("hotChance").style.display = "block";
+
+setTimeout(() => {
+
+const hotChance =
+document.getElementById("hotChance");
+
+hotChance.style.opacity = "0";
+
+setTimeout(() => {
+
+hotChance.style.display = "none";
+hotChance.style.opacity = "1";
+
+}, 600);
+
+}, 4000);
+
+}
+
+    const loadingMessages = [
+"AI解析中...",
+"過去50回を分析中...",
+"高期待数字を抽出中...",
+"連続数字を確認中...",
+"信頼度を計算中...",
+"当選パターンを照合中...",
+"AIが最終判断中...",
+"超激熱ゾーン突入..."
+];
+
+let msgIndex = 0;
+
+window.aiLoadingInterval = setInterval(() => {
+
+document.getElementById("aiLoadingText").innerText =
+loadingMessages[msgIndex];
+
+msgIndex++;
+
+if(msgIndex >= loadingMessages.length){
+    msgIndex = 0;
+}
+
+}, 1200);
+    
     let lastNumbers = parseNumbersFromInput("lastNumbers");
     let carryMode = document.getElementById("carryMode").checked;
     let mode = document.getElementById("mode").value;
+    document.getElementById("modeView").innerHTML =
+mode === "stable"
+? "🟢 現在モード：安定型"
+: mode === "balance"
+? "⚖️ 現在モード：バランス型"
+: mode === "attack"
+? "🔴 現在モード：攻め型"
+: "👑 現在モード：プレミアム予想";
+
+    
+    if(mode === "premium" && !isPremiumUser){
+    alert("👑 プレミアム予想はプレミアム会員限定です。");
+    openPremiumModal();
+
+    document.getElementById("startBtn").classList.remove("generating");
+    document.getElementById("aiLoadingText").style.display = "none";
+    document.getElementById("aiPercent").style.display = "none";
+    window.isGenerating = false;
+
+    return;
+}
+ 
 
     if(lastNumbers.length === 0){
-        alert("前回当選数字を入力してください。");
-        return;
-    }
+    alert("前回当選数字を入力してください。");
+    document.getElementById("startBtn").classList.remove("generating");
+    document.getElementById("aiLoadingText").style.display = "none";
+    document.getElementById("aiPercent").style.display = "none";
+    window.isGenerating = false;
+    return;
+} 
+
+    const freeTestMode = false;
+
+
+    if(!isPremiumUser && !freeTestMode){
+    const today = new Date().toLocaleDateString();
+    const lastFreeUseDate = localStorage.getItem("lastFreeUseDate");
+
+    if(lastFreeUseDate === today){
+    alert("無料版の予想は1日1回までです。\nプレミアム会員になると無制限で利用できます。");
+    openPremiumModal();
+
+    clearInterval(window.aiLoadingInterval);
+    clearInterval(window.aiPercentInterval);
+
+    document.getElementById("startBtn").classList.remove("generating");
+    document.getElementById("aiLoadingText").style.display = "none";
+    document.getElementById("aiPercent").style.display = "none";
+    document.getElementById("loading").style.display = "none";
+
+    window.isGenerating = false;
+
+    return;
+}
+
+    localStorage.setItem("lastFreeUseDate", today);
+}
+
+
 
     let ticket1 = createTicket(lastNumbers,true,carryMode,mode);
     let ticket2 = createTicket(lastNumbers,false,carryMode,mode);
@@ -381,32 +2655,545 @@ function generateLoto(){
 
     currentTicket1 = ticket1;
     currentTicket2 = ticket2;
+  
+    const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
+
+    audio.play();
+
+    let loading = document.getElementById("loading");
+
+    let loadingFill = document.getElementById("loadingFill");
+    loadingFill.style.width = "0%";
+
+    //loading.innerHTML = "AIが過去データ解析中..."; 
+    //loading.style.display = "block";  
+
+    setTimeout(() => {
+    loadingFill.style.width = "35%";
+    }, 300);
+
+    setTimeout(() => {
+    loadingFill.style.width = "70%";
+    }, 1000);
+
+    setTimeout(() => {
+    loadingFill.style.width = "100%";
+    }, 1800);
+
+
+    setTimeout(() => {
+    //loading.innerHTML = "過去データ解析中...";
+    }, 700);
+
+    setTimeout(() => {
+    //loading.innerHTML = "トレンド照合中...";
+    }, 1400);
+    
+    
+    
+
+   
 
     let pull1 = ticket1.filter(n => lastNumbers.includes(n));
     let pull2 = ticket2.filter(n => lastNumbers.includes(n));
-    let modeName = mode === "stable" ? "安定型" : "攻め型";
+    
+    let modeName =
+mode === "stable" ? "安定型" :
+mode === "balance" ? "バランス型" :
+mode === "attack" ? "攻め型" :
+"👑 プレミアム予想";
 
-    document.getElementById("result1").innerHTML = balls(ticket1);
-    document.getElementById("result2").innerHTML = balls(ticket2);
+
+
+if(!isPremiumUser){
+    analysisTopNumbers = [];
+}   
+
+let analysisUsed1 =
+ticket1.filter(n => analysisTopNumbers.includes(n));
+
+let analysisUsed2 =
+ticket2.filter(n => analysisTopNumbers.includes(n));
+
+let middleTopNumbers =
+JSON.parse(localStorage.getItem("middleTopNumbers")) || [];
+
+let recentTopNumbers =
+JSON.parse(localStorage.getItem("recentTopNumbers")) || [];
+
+if(!isPremiumUser){
+    middleTopNumbers = [];
+    recentTopNumbers = [];
+}
+
+let middleUsed1 =
+ticket1.filter(n => middleTopNumbers.includes(n));
+
+let middleUsed2 =
+ticket2.filter(n => middleTopNumbers.includes(n));
+
+let recentUsed1 =
+ticket1.filter(n => recentTopNumbers.includes(n));
+
+let recentUsed2 =
+ticket2.filter(n => recentTopNumbers.includes(n));
+
+
+    animateBalls("result1", ticket1);
+
+const allHotNumbers = [...ticket1, ...ticket2];
+
+let scoredHotNumbers = [...new Set(allHotNumbers)].map(n => {
+    let score = 0;
+
+    if(analysisTopNumbers.includes(n)) score += 5;
+    if(lastNumbers.includes(n)) score += 3;
+    if(n >= 30) score += 2;
+    if(carryMode && n >= 40) score += 3;
+
+    return { num:n, score:score };
+});
+
+scoredHotNumbers.sort((a,b) => b.score - a.score);
+
+const hotNumber1 = scoredHotNumbers[0].num;
+const hotNumber2 = scoredHotNumbers[1].num;
+const hotNumber3 = scoredHotNumbers[2].num;
+
+
+const hotReasons = [
+"直近の流れからAIが強く注目",
+"今回の予想内で中心になりやすい数字",
+"引っ張り・下一桁一致の流れと相性あり",
+"高期待ゾーンとしてAIが選出",
+"バランス面で重要度が高い数字"
+];
+
+document.getElementById("hotNumber").innerHTML = `
+👑 AI最終ランキング<br><br>
+
+<div style="
+font-size:22px;
+font-weight:bold;
+color:#ffd700;
+margin-bottom:6px;
+">
+🥇 本命
+</div>
+<span class="super-hot-number">
+${pad(hotNumber1)}
+</span>
+
+<div style="
+font-size:22px;
+font-weight:bold;
+color:#dddddd;
+margin-bottom:6px;
+">
+🥈 対抗
+</div>
+<span class="super-hot-number" style="
+width:58px;
+height:58px;
+font-size:22px;
+background:radial-gradient(circle,#ffffff,#d0d0d0,#999999);
+">
+${pad(hotNumber2)}
+</span>
+
+<br><br>
+
+<div style="
+font-size:22px;
+font-weight:bold;
+color:#d28b45;
+margin-bottom:6px;
+">
+🥉 穴
+</div>
+<span class="super-hot-number" style="
+width:58px;
+height:58px;
+font-size:24px;
+background:radial-gradient(circle,#ffd9b3,#cc9966,#996633);
+">
+${pad(hotNumber3)}
+</span>
+
+<div class="super-hot-reason" style="
+border:2px solid #ffcc00;
+border-radius:12px;
+padding:12px;
+margin-top:15px;
+background:rgba(255,204,0,0.08);
+">
+${hotReasons[Math.floor(Math.random() * hotReasons.length)]}
+</div>
+`;
+
+setTimeout(() => {
+
+const hotNumberArea =
+document.getElementById("hotNumber");
+
+hotNumberArea.style.opacity = "0";
+
+setTimeout(() => {
+
+hotNumberArea.innerHTML = "";
+hotNumberArea.style.opacity = "1";
+
+}, 600);
+
+}, 5000);
+
+    animateBalls("result2", ticket2);
+   
 
     document.getElementById("info1").innerHTML =
         modeName + " ／ 引っ張り数字：" + pull1.map(pad).join("・") +
         " ／ 下一桁一致1組 ／ 連続数字あり" +
-        (carryMode ? " ／ キャリー考慮" : "");
+        (carryMode ? " ／ キャリー考慮" : "")
+    
+   
++ "<br><span style='color:#ffd700;font-weight:bold;'>📊 50回ランキング反映数字：" +
+(analysisUsed1.length
+ ? analysisUsed1.map(pad).join("・")
+ : "なし")
++ "</span>"
 
++ "<br><span style='color:#00ffcc;font-weight:bold;'>📈 30回ランキング反映数字：" +
+(middleUsed1.length
+ ? middleUsed1.map(pad).join("・")
+ : "なし")
++ "</span>"
+
++ "<br><span style='color:#ff6666;font-weight:bold;'>🔥 10回急上昇反映数字：" +
+(recentUsed1.length
+ ? recentUsed1.map(pad).join("・")
+ : "なし")
++ "</span>"
+
+    
+    + "<br>AI信頼度：" + (80 + Math.floor(Math.random()*20)) + "%"
+    + '<div class="ai-gauge"><div class="ai-gauge-fill"></div></div>'
+    + "<div class='chartTitle'>AI数字バランス分析</div>"
+    + "<canvas id='chart1' width='260' height='120'></canvas>";
     document.getElementById("info2").innerHTML =
         modeName + " ／ 引っ張り数字：" + pull2.map(pad).join("・") +
         " ／ 下一桁一致1組 ／ 連続数字なし" +
-        (carryMode ? " ／ キャリー考慮" : "");
+        (carryMode ? " ／ キャリー考慮" : "")
+    
++ "<br><span style='color:#ffd700;font-weight:bold;'>📊 50回ランキング反映数字：" +
+(analysisUsed2.length
+ ? analysisUsed2.map(pad).join("・")
+ : "なし")
++ "</span>"
 
-    document.getElementById("copyMsg").innerHTML = "";
-    document.getElementById("checkMsg").innerHTML = "";
++ "<br><span style='color:#00ffcc;font-weight:bold;'>📈 30回ランキング反映数字：" +
+(middleUsed2.length
+ ? middleUsed2.map(pad).join("・")
+ : "なし")
++ "</span>"
+
++ "<br><span style='color:#ff6666;font-weight:bold;'>🔥 10回急上昇反映数字：" +
+(recentUsed2.length
+ ? recentUsed2.map(pad).join("・")
+ : "なし")
++ "</span>"
+
+
+    + "<br>AI信頼度：" + (80 + Math.floor(Math.random()*20)) + "%"
+    + '<div class="ai-gauge"><div class="ai-gauge-fill"></div></div>'
+    + "<div class='chartTitle'>AI数字バランス分析</div>"
+    + "<canvas id='chart2' width='260' height='120'></canvas>";
+    
+   setTimeout(() => {
+    clearInterval(window.aiLoadingInterval);
+    document.getElementById("aiLoadingText").innerText =
+    "🤖 AIランキング発表まで 3";
+}, 3000);
+
+setTimeout(() => {
+    document.getElementById("aiLoadingText").innerText =
+    "🤖 AIランキング発表まで 2";
+}, 3800);
+
+setTimeout(() => {
+    document.getElementById("aiLoadingText").innerText =
+    "🤖 AIランキング発表まで 1";
+}, 4600);
+
+setTimeout(() => {
+    document.getElementById("aiLoadingText").innerText =
+    "👑 AI注目ランキング決定！";
+}, 5400);
+
+    window.aiLoadingHideTimer = setTimeout(() => {
+clearInterval(window.aiPercentInterval);
+
+document.getElementById("aiPercent").innerText = "100%";
+
+document.getElementById("aiPercent").style.display = "none";
+
+document.getElementById("aiLoadingText").style.display = "none";
+document.getElementById("startBtn").classList.remove("generating");
+window.isGenerating = false;
+loading.style.display = "none";
+}, 6500);   
+
+    
+
+  
+   
 
     addHistory(ticket1,ticket2,modeName,carryMode);
+    drawChart("chart1", ticket1);
+    drawChart("chart2", ticket2);
+    
+    document.getElementById("aiSummary").style.display = "block";
+
+    let summaries = [
+
+    "💡 AI総評：今回は中盤数字を厚めにしつつ、引っ張り数字と下一桁一致を組み合わせたバランス型の予想です。",
+
+    "🔥 AI総評：直近データを重視し、流れの強い数字を優先した構成です。",
+
+    "⚡ AI総評：低数字と高数字のバランスを整えた安定寄りの予想です。",
+
+    "🎯 AI総評：連続数字と引っ張り数字を活かした攻守バランス型です。",
+
+    "📊 AI総評：過去傾向から出現率の高いゾーンを重点的に分析しました。"
+
+];
+
+let randomSummary =
+summaries[Math.floor(Math.random() * summaries.length)];
+
+if(isPremiumUser && pastPower === "strong"){
+    randomSummary =
+    "🔥 AI総評：強モード発動中。過去分析上位数字を2個固定で採用し、直近データの流れを強く反映した予想です。";
 }
 
+if(carryMode){
+    randomSummary +=
+    "<br>💰 キャリー攻略：高数字2個以上と40以上の数字を意識した攻め寄り構成です。";
+}
+
+
+document.getElementById("aiSummary").innerHTML =
+randomSummary;
+
+if(mode === "premium"){
+
+document.getElementById("aiSummary").innerHTML += `
+
+<div class="premiumModeEffect">
+
+👑 PREMIUM予想モード発動！<br>
+📈 30回・10回ランキング強化中
+
+</div>
+
+`;
+
+}
+
+const boostApplied =
+document.getElementById("boostApplied");
+
+const superBoost =
+document.getElementById("superBoost");
+
+const carryBoost =
+document.getElementById("carryBoost");
+
+
+
+if(boostApplied){
+    if(isPremiumUser && pastPower === "strong"){
+        boostApplied.innerHTML = "🔥 過去分析ブースト適用";
+        boostApplied.style.display = "block";
+    }else{
+        boostApplied.innerHTML = "";
+        boostApplied.style.display = "none";
+    }
+}
+
+if(superBoost){
+    if(isPremiumUser && pastPower === "strong"){
+        superBoost.innerHTML = "🚀 超ブースト演出発動！";
+        superBoost.style.display = "block";
+    }else{
+        superBoost.innerHTML = "";
+        superBoost.style.display = "none";
+    }
+}
+
+if(carryBoost){
+    if(carryMode){
+        carryBoost.innerHTML = "💰 キャリーオーバー攻略モード発動！";
+        carryBoost.style.display = "block";
+    }else{
+        carryBoost.innerHTML = "";
+        carryBoost.style.display = "none";
+    }
+}
+
+
+if(mode === "premium"){
+
+const premiumComments = [
+
+"過去50回・30回・直近10回の流れを通常より強めに解析し、今もっとも期待できる数字バランスを重視したプレミアム予想です。",
+
+"直近の出現傾向と急上昇数字を重視し、期待値の高いゾーンを中心に構成しました。",
+
+"過去データ分析とAI注目数字を組み合わせ、通常モードより攻めた構成に仕上げました。",
+
+"ランキング上位数字の流れを優先しつつ、配当妙味も考慮したプレミアム予想です。",
+
+"AIが現在のトレンドを総合分析し、最もバランスの良い数字配置を選出しました。"
+
+];
+
+const premiumComment =
+premiumComments[
+Math.floor(Math.random() * premiumComments.length)
+];
+
+document.getElementById("aiSummary").innerHTML += `
+
+<div class="premiumBox">
+
+<div class="aiRank">
+👑 プレミアムAIランク：
+${["SSS","SS","S"][Math.floor(Math.random()*3)]}
+</div><br>
+
+👑 プレミアム専用AI総評<br><br>
+
+${premiumComment}<br><br>
+
+✔ 30回ランキング強化：ON<br>
+✔ 10回急上昇強化：ON<br>
+✔ 過去分析反映数字：2個固定<br>
+※ 引っ張り数字と50回ランキング数字が重複した場合、表示上は1個になることがあります。<br>
+✔ AI信頼度：${88 + Math.floor(Math.random()*12)}%<br><br>
+
+<div class="vipMode">👑 PREMIUM解析モード：ON</div>
+
+</div>
+
+`;
+
+}
+
+}
+
+   
+    
+function drawChart(canvasId, numbers){
+
+    const canvas = document.getElementById(canvasId);
+    if(!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    const barWidth = 30;
+    const gap = 10;
+
+    numbers.forEach((num,index)=>{
+
+        let height = 40;
+
+if(num <= 12){
+    height = 50;
+}
+else if(num <= 24){
+    height = 90;
+}
+else{
+    height = 115;
+}
+
+        const x = index * (barWidth + gap) + 15;
+        const y = canvas.height - height+ 20;
+
+        let gradient = ctx.createLinearGradient(x, y, x, y + height);
+gradient.addColorStop(0, "#00f0ff");
+gradient.addColorStop(0.5, "#00ff88");
+gradient.addColorStop(1, "#ffee00");
+
+ctx.fillStyle = gradient;
+ctx.shadowColor = "#00f0ff";
+ctx.shadowBlur = 15;
+let currentHeight = 0;
+
+let animateBar = setInterval(()=>{
+
+    ctx.clearRect(x,y-5,barWidth,height+10);
+
+    currentHeight += 5;
+
+    if(currentHeight >= height){
+        currentHeight = height;
+        clearInterval(animateBar);
+    }
+
+    let gradient = ctx.createLinearGradient(
+        x,
+        y + height - currentHeight,
+        x,
+        y + height
+    );
+
+    gradient.addColorStop(0, "#00f0ff");
+    gradient.addColorStop(0.5, "#00ff88");
+    gradient.addColorStop(1, "#ffee00");
+
+    ctx.fillStyle = gradient;
+    ctx.shadowColor = "#00f0ff";
+    ctx.shadowBlur = 15;
+
+    ctx.fillRect(
+        x,
+        y + height - currentHeight,
+        barWidth,
+        currentHeight
+    );
+
+    ctx.shadowBlur = 0;
+
+},20 + index * 120);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "14px sans-serif";
+        ctx.fillText(num,x+5,y-12);
+
+    });
+
+}
+
+
+    function animateBalls(id, numbers){
+  let element = document.getElementById(id);
+  element.innerHTML = "";
+
+  numbers.forEach((num,index)=>{
+    setTimeout(()=>{
+      element.innerHTML += balls([num]);
+    }, index * 350);
+  });
+}
+
+
 function checkLatestResult(){
+document.getElementById("checkMsg").innerHTML = "";
     let winning = parseNumbersFromInput("winningNumbers");
+    let bonus = Number(document.getElementById("bonusNumber").value);
 
     if(currentTicket1.length === 0 || currentTicket2.length === 0){
         alert("先に予想してください。");
@@ -420,18 +3207,94 @@ function checkLatestResult(){
 
     let hits1 = currentTicket1.filter(n => winning.includes(n));
     let hits2 = currentTicket2.filter(n => winning.includes(n));
+    
+    let msg = document.getElementById("checkMsg");
 
-    document.getElementById("result1").innerHTML = balls(currentTicket1,hits1);
-    document.getElementById("result2").innerHTML = balls(currentTicket2,hits2);
+    msg.innerHTML = "🎉 当選チェック完了！";
+    msg.style.display = "block";
 
-    document.getElementById("checkMsg").innerHTML =
-        "今回の予想照合<br>" +
-        "1口目：" + hits1.length + "個一致（" + hits1.map(pad).join("・") + "）<br>" +
-        "2口目：" + hits2.length + "個一致（" + hits2.map(pad).join("・") + "）";
+ 
+    function getRank(hitCount, ticket, bonus){
+
+    let hasBonus = ticket.includes(bonus);
+
+    if(hitCount === 6) return "1等";
+    if(hitCount === 5 && hasBonus) return "2等";
+    if(hitCount === 5) return "3等";
+    if(hitCount === 4) return "4等";
+    if(hitCount === 3) return "5等";
+
+    return "ハズレ";
 }
 
+
+let rank1 = getRank(hits1.length, currentTicket1, bonus);
+let rank2 = getRank(hits2.length, currentTicket2, bonus);
+
+let bonusText1 =
+currentTicket1.includes(bonus)
+? " ＋ ボーナス数字一致（" + pad(bonus) + "）"
+: "";
+
+let bonusText2 =
+currentTicket2.includes(bonus)
+? " ＋ ボーナス数字一致（" + pad(bonus) + "）"
+: "";
+
+
+
+
+if(rank1 === "1等" || rank2 === "1等"){
+    startFirstPrizeEffect();
+}
+
+let color1 = getRankColor(rank1);
+let color2 = getRankColor(rank2);
+
+    document.getElementById("result1").innerHTML = balls(currentTicket1,hits1,bonus);
+    document.getElementById("result2").innerHTML =balls(currentTicket2,hits2,bonus);
+
+   document.getElementById("checkMsg").innerHTML =
+"今回の予想照合<br>" +
+
+(rank1=="1等"
+ ? "<span class='rainbowWin'>🌈1口目：" + rank1 + "</span>"
+ : "<span style='color:" + color1 + ";font-weight:bold;'>1口目：" + rank1 + "</span>") +
+" / " + hits1.length + "個一致（" + hits1.map(pad).join("・") + "）" + bonusText1 + "<br>" +
+
+"<span style='color:" + color2 + ";font-weight:bold;'>2口目：" + rank2 + "</span>" +
+" / " + hits2.length + "個一致（" + hits2.map(pad).join("・") + "）" + bonusText2;
+
+}
+
+function getRankSaved(hitCount, ticket, bonus){
+
+    let hasBonus = ticket.includes(bonus);
+
+    if(hitCount === 6) return "1等";
+    if(hitCount === 5 && hasBonus) return "2等";
+    if(hitCount === 5) return "3等";
+    if(hitCount === 4) return "4等";
+    if(hitCount === 3) return "5等";
+
+    return "ハズレ";
+}
+
+function getRankColor(rank){
+    if(rank === "1等") return "#ff00ff";
+    if(rank === "2等") return "#ffd700";
+    if(rank === "3等") return "#ff8800";
+    if(rank === "4等") return "#66ccff";
+    if(rank === "5等") return "#00cc66";
+
+    return "#999";
+}
+
+
 function checkSavedHistory(){
+
     let winning = parseNumbersFromInput("winningNumbers");
+    let bonus = Number(document.getElementById("bonusNumber").value);
 
     if(winning.length === 0){
         alert("当選数字を入力してください。");
@@ -443,22 +3306,442 @@ function checkSavedHistory(){
         return;
     }
 
-    let html = "<b>保存履歴との照合結果</b><br>";
+    let html = "<br><br><b>保存履歴との照合結果</b><br>";
 
-    historyList.forEach((item,index) => {
+    historyList.forEach(item => {
+
         let hits1 = item.ticket1.filter(n => winning.includes(n));
         let hits2 = item.ticket2.filter(n => winning.includes(n));
 
-        html += "<hr>" +
-            "<b>" + item.time + "</b><br>" +
-            "1口目：" + hits1.length + "個一致（" + hits1.map(pad).join("・") + "）<br>" +
-            "2口目：" + hits2.length + "個一致（" + hits2.map(pad).join("・") + "）";
+        let rank1 = getRankSaved(hits1.length, item.ticket1, bonus);
+        let rank2 = getRankSaved(hits2.length, item.ticket2, bonus);
+
+        let bonusText1 =
+item.ticket1.includes(bonus)
+? " ＋ ボーナス数字一致（" + pad(bonus) + "）"
+: "";
+
+let bonusText2 =
+item.ticket2.includes(bonus)
+? " ＋ ボーナス数字一致（" + pad(bonus) + "）"
+: "";
+
+        if(rank1 === "1等" || rank2 === "1等"){
+        startFirstPrizeEffect();
+}
+
+        let color1 = getRankColor(rank1);
+        let color2 = getRankColor(rank2);
+
+        html += "<br>" +
+
+        "<b>" + item.time + "</b><br>" +
+        "<span style='color:" + color1 + ";font-weight:bold;font-size:24px;text-shadow:0 0 12px " + color1 + ";'>" +
+       "1口目：" + rank1 + "</span> / " +
+       hits1.length + "個一致（" + hits1.map(pad).join("・") + "）" + bonusText1 + "<br>" +
+        
+        "<span style='color:" + color2 + ";font-weight:bold;font-size:24px;text-shadow:0 0 12px " + color2 + ";'>" +
+        "2口目：" + rank2 + "</span> / " +
+        hits2.length + "個一致（" + hits2.map(pad).join("・") + "）" + bonusText2;
+
     });
 
     document.getElementById("checkMsg").innerHTML = html;
 }
 
+function startFirstPrizeEffect(){
+
+    const effect = document.getElementById("firstPrizeEffect");
+
+    effect.style.display = "block";
+
+    document.body.classList.add("first-prize-flash");
+
+    for(let i = 0; i < 120; i++){
+
+        const confetti = document.createElement("div");
+
+        confetti.className = "confetti";
+
+        confetti.style.left = Math.random() * 100 + "vw";
+
+        confetti.style.background =
+        `hsl(${Math.random()*360},100%,50%)`;
+
+        confetti.style.animationDuration =
+        (Math.random()*2 + 2) + "s";
+
+        document.body.appendChild(confetti);
+
+        setTimeout(()=>{
+            confetti.remove();
+        },4000);
+    }
+
+    setTimeout(()=>{
+
+        effect.style.display = "none";
+
+        document.body.classList.remove("first-prize-flash");
+
+    },5000);
+}
+
+function openPremiumModal(){
+    const modal = document.getElementById("premiumModal");
+    const box = document.querySelector(".premiumModalBox");
+
+    modal.style.display = "flex";
+
+    if(box){
+        box.scrollTop = 0;
+    }
+}
+
+function closePremiumModal(){
+  document.getElementById("premiumModal").style.display = "none";
+}
+
+function registerPremium(){
+    isPremiumUser = true;
+    localStorage.setItem("isPremiumUser","true");
+    updateMemberStatus();
+    closePremiumModal();
+
+    alert(
+"🚧 プレミアム会員登録（決済機能）は現在準備中です。\n\n" +
+"正式リリース後、月額500円で利用可能になります。\n\n" +
+"現在は開発テスト版のため、自動でPREMIUM MEMBERへ切り替わります。"
+);
+}
+
+function handlePastAnalysis(){
+
+  if(isPremiumUser){
+    analyzePastData();
+  }else{
+    openPremiumModal();
+  }
+
+}
+
+function handlePastPower(power){
+
+  if(isPremiumUser){
+    setPastPower(power);
+  }else{
+    openPremiumModal();
+  }
+
+}
+
+
+function clearCheckResult(){
+
+    document.getElementById("checkMsg").innerHTML = "";
+
+    document.getElementById("result1").innerHTML = "";
+
+    document.getElementById("result2").innerHTML = "";
+
+}
+
+function analyzePastData(){
+
+    let text =
+    document.getElementById("pastData").value;
+
+    if(text.trim() === ""){
+        alert("過去データを入力してください");
+        return;
+    }
+
+    let lines = text
+    .trim()
+    .split(/\n/)
+    .filter(line => line.trim() !== "");
+
+    let counts = {};
+
+    let recentCounts = {};
+
+    let middleCounts = {};
+
+    lines.forEach((line, index) => {
+
+        let nums = line
+        .trim()
+        .split(/\s+/)
+        .map(Number)
+        .filter(n => n >= 1 && n <= 43);
+
+        nums.forEach(n => {
+
+    counts[n] = (counts[n] || 0) + 1;
+
+    if(index < 10){
+        recentCounts[n] =
+        (recentCounts[n] || 0) + 1;
+    }
+
+    if(index < 30){
+    middleCounts[n] =
+    (middleCounts[n] || 0) + 1;
+}
+
+
+});
+
+});
+
+    let recentRanking = Object.entries(recentCounts)
+.sort((a,b) => b[1] - a[1])
+.slice(0,5);
+
+    let middleRanking = Object.entries(middleCounts)
+.sort((a,b) => b[1] - a[1])
+.slice(0,5);
+
+    let ranking = Object.entries(counts)
+
+    .sort((a,b)=>b[1]-a[1])
+
+    .slice(0,10);
+
+    let html =
+"📊 直近50回 出現ランキング<br><br>";
+
+ranking.forEach((r,i)=>{
+    html +=
+    `${i+1}位：${pad(r[0])}（${r[1]}回）<br>`;
+});
+
+html += "<br>📈 直近30回ランキング<br>";
+
+middleRanking.forEach((r,i)=>{
+    html +=
+    `${i+1}位：${pad(r[0])}（${r[1]}回）<br>`;
+});
+
+html += "<br>";
+
+
+html += "<br>🚀 直近10回急上昇ランキング<br>";
+
+recentRanking.forEach((r,i)=>{
+    html +=
+    `${i+1}位：${pad(r[0])}（${r[1]}回）<br>`;
+});
+
+html += "<br>";
+
+    let aiPickNumbers = [];
+
+ranking.slice(0,3).forEach(r => {
+    aiPickNumbers.push(Number(r[0]));
+});
+
+middleRanking.slice(0,2).forEach(r => {
+    aiPickNumbers.push(Number(r[0]));
+});
+
+recentRanking.slice(0,2).forEach(r => {
+    aiPickNumbers.push(Number(r[0]));
+});
+
+aiPickNumbers = [...new Set(aiPickNumbers)];
+
+ranking.forEach(r => {
+    let num = Number(r[0]);
+    if(aiPickNumbers.length < 5 && !aiPickNumbers.includes(num)){
+        aiPickNumbers.push(num);
+    }
+});
+
+middleRanking.forEach(r => {
+    let num = Number(r[0]);
+    if(aiPickNumbers.length < 5 && !aiPickNumbers.includes(num)){
+        aiPickNumbers.push(num);
+    }
+});
+
+recentRanking.forEach(r => {
+    let num = Number(r[0]);
+    if(aiPickNumbers.length < 5 && !aiPickNumbers.includes(num)){
+        aiPickNumbers.push(num);
+    }
+});
+
+aiPickNumbers = aiPickNumbers.slice(0,5);
+
+let aiPick = aiPickNumbers.map(n => pad(n));
+
+
+localStorage.setItem(
+    "analysisTopNumbers",
+    JSON.stringify(ranking.slice(0,5).map(r => Number(r[0])))
+);
+
+localStorage.setItem(
+    "middleTopNumbers",
+    JSON.stringify(middleRanking.slice(0,5).map(r => Number(r[0])))
+);
+
+
+localStorage.setItem(
+    "recentTopNumbers",
+    JSON.stringify(recentRanking.slice(0,5).map(r => Number(r[0])))
+);
+
+
+function getReason(num){
+
+if(recentRanking.slice(0,5).map(r => Number(r[0])).includes(Number(num))){
+    return "10回急上昇";
+}
+
+if(middleRanking.slice(0,5).map(r => Number(r[0])).includes(Number(num))){
+    return "30回ランキング上位";
+}
+
+if(ranking.slice(0,10).map(r => Number(r[0])).includes(Number(num))){
+    return "50回ランキング上位";
+}
+
+return "AI分析注目数字";
+
+}
+
+html += "<br>🤖 AIおすすめ数字<br>";
+
+html += `<div class="recommend-ball-area">`;
+
+html += aiPick.map(n =>
+`<div style="display:inline-block;text-align:center;margin:5px;">
+<div class="recommend-ball">` +
+n +
+`</div>
+<div style="font-size:12px;color:#ffd700;margin-top:5px;">` +
+getReason(n) +
+`</div>
+</div>`
+).join("");
+
+html += `</div>`;
+   
+
+html += "<br><br>" +
+"💬 AI分析コメント<br>" +
+"📊 上位5数字を総合分析しました。<br>" +
+"🔥 直近10回の急上昇数字を重視しています。<br>" +
+"📈 30回ランキングの流れも反映しています。<br>" +
+"🏆 50回ランキング上位数字も考慮しています。";
+
+
+    localStorage.setItem("pastAnalysisResult", html);
+
+    localStorage.setItem("pastDataInput", document.getElementById("pastData").value);
+
+
+    document.getElementById("pastAnalysis")
+    .innerHTML = html;
+}
+
+
+function clearPastAnalysis(){
+
+if(!isPremiumUser){
+    openPremiumModal();
+    return;
+}
+
+    if(confirm("過去データ分析の保存内容を削除しますか？")){
+
+        localStorage.removeItem("pastAnalysisResult");
+        localStorage.removeItem("pastDataInput");
+        localStorage.removeItem("analysisTopNumbers"); 
+        localStorage.removeItem("middleTopNumbers");
+        localStorage.removeItem("recentTopNumbers");
+
+
+        document.getElementById("pastAnalysis").innerHTML = "";
+        document.getElementById("pastData").value = "";
+
+    }
+
+}
+
 loadHistory();
+
+if(localStorage.getItem("isPremiumUser") === "true"){
+       isPremiumUser = true;
+}
+
+updateMemberStatus();
+
+
+window.addEventListener("load", function(){
+    setPastPower(pastPower);
+
+    const savedAnalysis =
+localStorage.getItem("pastAnalysisResult");
+    const savedPastData =
+localStorage.getItem("pastDataInput");
+
+if(savedPastData){
+    document.getElementById("pastData").value = savedPastData;
+}
+
+    if(savedAnalysis){
+        document.getElementById("pastAnalysis").innerHTML =
+        savedAnalysis;
+    }
+
+});
+
+setInterval(() => {
+
+const sparkle = document.createElement("div");
+
+sparkle.className = "sparkle";
+
+sparkle.style.left =
+Math.random() * window.innerWidth + "px";
+
+sparkle.style.top = "-20px";
+
+sparkle.style.animationDuration =
+(4 + Math.random() * 4) + "s";
+
+document.body.appendChild(sparkle);
+
+setTimeout(() => {
+sparkle.remove();
+}, 8000);
+
+}, 300);
+
+
+setInterval(() => {
+
+const star =
+document.createElement("div");
+
+star.className = "shootingStar";
+
+star.style.top =
+(Math.random() * 300) + "px";
+
+document.body.appendChild(star);
+
+setTimeout(() => {
+star.remove();
+}, 2500);
+
+}, 6000);
+
+</script>
+
 </script>
 
 </body>
