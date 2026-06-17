@@ -2623,6 +2623,9 @@ if(
         JSON.parse(localStorage.getItem("analysisTopNumbers")).length === 0
     )
 ){
+
+
+
     alert(
         "📊 先に過去データ分析を実行してください。"
     );
@@ -2630,6 +2633,33 @@ if(
     document.getElementById("startBtn").classList.remove("generating");
     document.getElementById("aiLoadingText").style.display = "none";
     document.getElementById("aiPercent").style.display = "none";
+
+    window.isGenerating = false;
+
+    return;
+}
+
+if(
+    isPremiumUser &&
+    pastPower === "strong" &&
+    mode !== "premium" &&
+    (
+        !localStorage.getItem("analysisTopNumbers") ||
+        JSON.parse(localStorage.getItem("analysisTopNumbers")).length === 0
+    )
+){
+    alert(
+        "📊 強モードを使うには、先に過去データ分析を実行してください。\n\n" +
+        "過去当選データを入力して「過去データを分析」を押してから、もう一度予想してください。"
+    );
+
+    clearInterval(window.aiLoadingInterval);
+    clearInterval(window.aiPercentInterval);
+
+    document.getElementById("startBtn").classList.remove("generating");
+    document.getElementById("aiLoadingText").style.display = "none";
+    document.getElementById("aiPercent").style.display = "none";
+    document.getElementById("loading").style.display = "none";
 
     window.isGenerating = false;
 
