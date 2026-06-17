@@ -2616,6 +2616,26 @@ mode === "stable"
     return;
 } 
 
+if(
+    mode === "premium" &&
+    (
+        !localStorage.getItem("analysisTopNumbers") ||
+        JSON.parse(localStorage.getItem("analysisTopNumbers")).length === 0
+    )
+){
+    alert(
+        "📊 先に過去データ分析を実行してください。"
+    );
+
+    document.getElementById("startBtn").classList.remove("generating");
+    document.getElementById("aiLoadingText").style.display = "none";
+    document.getElementById("aiPercent").style.display = "none";
+
+    window.isGenerating = false;
+
+    return;
+}
+
     const freeTestMode = false;
 
 
