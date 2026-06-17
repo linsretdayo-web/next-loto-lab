@@ -2649,9 +2649,21 @@ mode === "stable"
     let ticket2 = createTicket(lastNumbers,false,carryMode,mode);
 
     if(ticket1 === null || ticket2 === null){
-        alert("条件が厳しすぎて生成できませんでした。");
-        return;
-    }
+    alert("条件が厳しすぎて生成できませんでした。");
+
+    clearInterval(window.aiLoadingInterval);
+    clearInterval(window.aiPercentInterval);
+
+    document.getElementById("startBtn").classList.remove("generating");
+    document.getElementById("aiLoadingText").style.display = "none";
+    document.getElementById("aiPercent").style.display = "none";
+    document.getElementById("loading").style.display = "none";
+
+    window.isGenerating = false;
+
+    return;
+}
+
 
     currentTicket1 = ticket1;
     currentTicket2 = ticket2;
