@@ -1668,6 +1668,13 @@ display:none;
 </div>
 <br>
 <button onclick="copyBothTickets()">2口まとめてコピー</button>
+<br>
+<button onclick="saveFavoritePrediction()">⭐ 2口まとめてお気に入り保存</button>
+<br>
+<button onclick="saveFavoriteSingle(1)">⭐ 1口目だけお気に入り保存</button>
+<br>
+<button onclick="saveFavoriteSingle(2)">⭐ 2口目だけお気に入り保存</button>
+
 <div class="copyMsg" id="copyMsg"></div>
 </div>
 
@@ -1740,6 +1747,12 @@ AIおすすめ数字として上位5個を抽出し、
 
 </div>
 
+
+<div class="box">
+
+<h2 id="favoriteTitle">⭐ お気に入り予想 0件</h2>
+<div class="history" id="favoriteHistory">まだお気に入り予想はありません。</div>
+</div>
 <div id="historyStats"></div>
 <div id="numberRanking"></div>
 <div id="aiRecommend"></div>
@@ -1764,6 +1777,8 @@ document.addEventListener("copy", function(e){
 });
 
 let historyList = [];
+let favoriteList = [];
+
 
 let isPremiumUser = false;
 
@@ -2219,10 +2234,54 @@ function loadHistory(){
     if(saved){
         historyList = JSON.parse(saved);
     }
+
+    let favoriteSaved = localStorage.getItem("favoriteList");
+
+if(favoriteSaved){
+    favoriteList = JSON.parse(favoriteSaved);
+}
+
     renderHistory();
 }
 
 function renderHistory(){
+
+let favoriteArea = document.getElementById("favoriteHistory");
+
+let favoriteTitle = document.getElementById("favoriteTitle");
+
+if(favoriteTitle){
+    favoriteTitle.innerText =
+    "⭐ お気に入り予想 " + favoriteList.length + "件";
+}
+
+if(favoriteArea){
+
+    if(favoriteList.length === 0){
+
+        favoriteArea.innerHTML =
+        "まだお気に入り予想はありません。";
+
+    }else{
+
+        favoriteArea.innerHTML =
+        favoriteList.map((item,index) => `
+        <div style="margin-bottom:15px;padding:10px;border:1px solid gold;border-radius:10px;">
+        ⭐ ${item.time}<br>
+        ${item.modeName}<br>
+        1口目： ${item.ticket1.join(" ・ ")}<br>
+        ${item.ticket2.length > 0 ? "2口目： " + item.ticket2.join(" ・ ") : ""}
+        <br><br>
+        <button onclick="deleteFavorite(${index})">
+        🗑 お気に入り削除
+        </button>
+        </div>
+        `).join("");
+
+    }
+
+}
+
     let area = document.getElementById("history");
     document.getElementById("historyStats").innerHTML =
     "📊 保存履歴：" + historyList.length + "件";
@@ -2397,9 +2456,61 @@ document.getElementById("aiComment").innerHTML =
             "<b>" + item.time + "</b><br>" +
             item.modeName + (item.carryMode ? " ／ キャリーON" : " ／ キャリーOFF") + "<br>" +
             "1口目： " + item.ticket1.map(pad).join(" ・ ") + "<br>" +
-            "2口目： " + item.ticket2.map(pad).join(" ・ ");
+            "2口目： " + item.ticket2.map(pad).join(" ・ ")
+            + "<br><br>"
+            + "<button onclick='saveHistoryFavorite(" + historyList.indexOf(item) + ")'>⭐ お気に入り保存</button>";
+
     }).join("");
 }
+
+function isDuplicateFavorite(newItem){
+
+    const newTicket1 = newItem.ticket1.map(Number).sort((a,b)=>a-b).join("-");
+    const newTicket2 = newItem.ticket2.map(Number).sort((a,b)=>a-b).join("-");
+
+    return favoriteList.some(item => {
+        const ticket1 = item.ticket1.map(Number).sort((a,b)=>a-b).join("-");
+        const ticket2 = item.ticket2.map(Number).sort((a,b)=>a-b).join("-");
+
+        return ticket1 === newTicket1 && ticket2 === newTicket2;
+    });
+}
+
+
+function saveHistoryFavorite(index){
+
+    let item = historyList[index];
+
+    if(!item){
+        alert("保存する履歴が見つかりません。");
+        return;
+    }
+
+    let favoriteItem = {
+        time: new Date().toLocaleString(),
+        modeName: item.modeName,
+        carryMode: item.carryMode,
+        ticket1: item.ticket1,
+        ticket2: item.ticket2
+    };
+
+    if(isDuplicateFavorite(favoriteItem)){
+    alert("⭐ この予想はすでにお気に入り保存されています。");
+    return;
+}
+
+    favoriteList.unshift(favoriteItem);
+
+    localStorage.setItem(
+        "favoriteList",
+        JSON.stringify(favoriteList)
+    );
+
+    alert("⭐ 履歴からお気に入り保存しました。");
+
+    renderHistory();
+}
+
 
 function addHistory(ticket1, ticket2, modeName, carryMode){
     let item = {
@@ -2462,6 +2573,94 @@ function copyBothTickets(){
 
     copyText(text);
 }
+
+function saveFavoritePrediction(){
+    if(currentTicket1.length === 0 || currentTicket2.length === 0){
+        alert("先に予想してください。");
+        return;
+    }
+
+    let modeText = document.getElementById("modeView").innerText;
+    let carryMode = document.getElementById("carryMode").checked;
+
+    let item = {
+        time: new Date().toLocaleString(),
+        modeName: modeText.replace("現在モード：", ""),
+        carryMode: carryMode,
+        ticket1: currentTicket1,
+        ticket2: currentTicket2
+    };
+    
+    if(isDuplicateFavorite(item)){
+    alert("⭐ この予想はすでにお気に入り保存されています。");
+    return;
+}
+
+ 
+    favoriteList.unshift(item);
+    localStorage.setItem("favoriteList", JSON.stringify(favoriteList));
+
+    alert("⭐ お気に入り予想に保存しました。");
+    renderHistory();
+}
+
+function saveFavoriteSingle(num){
+
+    let ticket = [];
+
+    if(num === 1){
+        ticket = currentTicket1;
+    }else{
+        ticket = currentTicket2;
+    }
+
+    if(ticket.length === 0){
+        alert("先に予想してください。");
+        return;
+    }
+
+    let item = {
+        time: new Date().toLocaleString(),
+        modeName: document.getElementById("modeView").innerText.replace("現在モード：",""),
+        ticket1: ticket,
+        ticket2: []
+    };
+    
+    if(isDuplicateFavorite(item)){
+    alert("⭐ この予想はすでにお気に入り保存されています。");
+    return;
+}
+
+
+    favoriteList.unshift(item);
+
+    localStorage.setItem(
+        "favoriteList",
+        JSON.stringify(favoriteList)
+    );
+
+    alert("⭐ お気に入り予想に保存しました。");
+
+    renderHistory();
+}
+
+function deleteFavorite(index){
+
+if(!confirm("このお気に入りを削除しますか？")){
+    return;
+}
+
+favoriteList.splice(index, 1);
+
+localStorage.setItem(
+    "favoriteList",
+    JSON.stringify(favoriteList)
+);
+
+renderHistory();
+
+}
+
 
 function generateLoto(){
 
@@ -3802,7 +4001,6 @@ star.remove();
 
 }, 6000);
 
-</script>
 
 </script>
 
