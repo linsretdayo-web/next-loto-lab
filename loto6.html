@@ -1751,6 +1751,13 @@ AIおすすめ数字として上位5個を抽出し、
 <div class="box">
 
 <h2 id="favoriteTitle">⭐ お気に入り予想 0件</h2>
+<select id="favoriteFilter" onchange="renderHistory()">
+<option value="all">すべて</option>
+<option value="安定型">安定型</option>
+<option value="バランス型">バランス型</option>
+<option value="攻め型">攻め型</option>
+<option value="プレミアム予想">プレミアム予想</option>
+</select>
 <div class="history" id="favoriteHistory">まだお気に入り予想はありません。</div>
 </div>
 <div id="historyStats"></div>
@@ -2250,9 +2257,13 @@ let favoriteArea = document.getElementById("favoriteHistory");
 
 let favoriteTitle = document.getElementById("favoriteTitle");
 
+let favoriteFilter = document.getElementById("favoriteFilter");
+let selectedFavoriteFilter = favoriteFilter ? favoriteFilter.value : "all";
+
 if(favoriteTitle){
+    
     favoriteTitle.innerText =
-    "⭐ お気に入り予想 " + favoriteList.length + "件";
+    "⭐ お気に入り予想 " + favoriteList.length + "件 / 100件";
 }
 
 if(favoriteArea){
@@ -2264,21 +2275,48 @@ if(favoriteArea){
 
     }else{
 
-        favoriteArea.innerHTML =
-        favoriteList.map((item,index) => `
-        <div style="margin-bottom:15px;padding:10px;border:1px solid gold;border-radius:10px;">
+        
+      let filteredFavorites = favoriteList
+    .map((item, originalIndex) => ({ item, originalIndex }))
+    .filter(obj => {
+
+    let modeName = obj.item.modeName || "";
+
+    modeName = modeName
+        .replace("🟢", "")
+        .replace("⚖️", "")
+        .replace("🔴", "")
+        .replace("👑", "")
+        .trim();
+
+    return selectedFavoriteFilter === "all" ||
+           modeName === selectedFavoriteFilter;
+});
+
+favoriteArea.innerHTML =
+filteredFavorites.map(obj => {
+    let item = obj.item;
+    let index = obj.originalIndex;
+
+    return `
+    <div style="margin-bottom:15px;padding:10px;border:1px solid gold;border-radius:10px;">
         ⭐ ${item.time}<br>
         ${item.modeName}<br>
         1口目： ${item.ticket1.join(" ・ ")}<br>
         ${item.ticket2.length > 0 ? "2口目： " + item.ticket2.join(" ・ ") : ""}
         <br><br>
+        <button onclick="copyFavorite(${index})">
+        📋 コピー
+        </button>
+        <br><br>
         <button onclick="deleteFavorite(${index})">
         🗑 お気に入り削除
         </button>
-        </div>
-        `).join("");
+    </div>
+    `;
+}).join("");
 
-    }
+}
 
 }
 
@@ -2499,6 +2537,12 @@ function saveHistoryFavorite(index){
     return;
 }
 
+    if(favoriteList.length >= 100){
+    alert("⭐ お気に入りは100件までです。");
+    return;
+}
+
+
     favoriteList.unshift(favoriteItem);
 
     localStorage.setItem(
@@ -2596,7 +2640,10 @@ function saveFavoritePrediction(){
     return;
 }
 
- 
+    if(favoriteList.length >= 100){
+    alert("⭐ お気に入りは100件までです。");
+    return;
+} 
     favoriteList.unshift(item);
     localStorage.setItem("favoriteList", JSON.stringify(favoriteList));
 
@@ -2631,6 +2678,11 @@ function saveFavoriteSingle(num){
     return;
 }
 
+    if(favoriteList.length >= 100){
+    alert("⭐ お気に入りは100件までです。");
+    return;
+}    
+
 
     favoriteList.unshift(item);
 
@@ -2642,6 +2694,24 @@ function saveFavoriteSingle(num){
     alert("⭐ お気に入り予想に保存しました。");
 
     renderHistory();
+}
+
+function copyFavorite(index){
+
+    let item = favoriteList[index];
+
+    if(!item) return;
+
+    let text =
+        "1口目： " + item.ticket1.join(" ・ ");
+
+    if(item.ticket2.length > 0){
+        text += "\n2口目： " + item.ticket2.join(" ・ ");
+    }
+
+    navigator.clipboard.writeText(text);
+
+    alert("📋 お気に入り予想をコピーしました。");
 }
 
 function deleteFavorite(index){
