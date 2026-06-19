@@ -1780,10 +1780,23 @@ AIおすすめ数字として上位5個を抽出し、
 
 <div class="notice">
 ※このアプリは当選を保証するものではありません。<br>
-独自条件による予想補助ツールです。
+独自条件による予想補助ツールです。<br><br>
+
+<a href="#" onclick="showTerms()">📜 利用規約</a>
 </div>
 
 <script>
+
+function showTerms(){
+    alert(
+        "【利用規約】\n\n" +
+        "NEXTロト研究所はロト6予想を楽しむための補助ツールです。\n\n" +
+        "当アプリの予想数字は当選を保証するものではありません。\n\n" +
+        "宝くじの購入および利用は利用者自身の判断と責任で行ってください。\n\n" +
+        "本サービスの利用により発生した損害について、運営者は一切責任を負いません。\n\n" +
+        "本サービスの内容は予告なく変更・停止する場合があります。"
+    );
+}
 
 document.addEventListener("copy", function(e){
     const selectedText = window.getSelection().toString();
