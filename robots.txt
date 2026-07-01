@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://linsretdayo-web.github.io/next-loto-lab/sitemap.xml
