@@ -3,14 +3,28 @@
 
   <url>
     <loc>https://linsretdayo-web.github.io/next-loto-lab/</loc>
-    <lastmod>2026-07-08</lastmod>
+    <lastmod>2026-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
     <loc>https://linsretdayo-web.github.io/next-loto-lab/loto6.html</loc>
-    <lastmod>2026-07-08</lastmod>
+    <lastmod>2026-07-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://linsretdayo-web.github.io/next-loto-lab/loto6-ai-yosou.html</loc>
+    <lastmod>2026-07-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://linsretdayo-web.github.io/next-loto-lab/loto6-kakodata.html</loc>
+    <lastmod>2026-07-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
