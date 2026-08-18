@@ -2781,7 +2781,7 @@ if (analysisUseCount > 0 && combinedTopNumbers.length > 0 && numbers.length < 6)
     num = Math.floor(Math.random() * 43) + 1;
 }
 
-            if(!carryMode && num === 41) continue;
+            
             if(!numbers.includes(num)) numbers.push(num);
         }
 
@@ -2802,12 +2802,6 @@ numbers.filter(n =>
 ).length;
 
 if(isPremiumUser && effectivePastPower === "strong" && analysisHitCount !== 2) continue;
-if(isPremiumUser && pastPower === "strong" && numbers.includes(42) && Math.random() < 0.75) continue;
-if(isPremiumUser && pastPower === "strong" && numbers.includes(1) && Math.random() < 0.35) continue;
-if(isPremiumUser && pastPower === "strong" && numbers.includes(43) && Math.random() < 0.75) continue;
-if(isPremiumUser && pastPower === "strong" && numbers.includes(40) && Math.random() < 0.35) continue;
-if(isPremiumUser && pastPower === "strong" && numbers.includes(24) && Math.random() < 0.25) continue;
-if(isPremiumUser && pastPower === "strong" && numbers.includes(18) && Math.random() < 0.2) continue;
 
 if(isPremiumUser && pastPower !== "strong" && analysisHitCount >= 4) continue;
         if(numbers[0] < 1 || numbers[0] > 9) continue;
@@ -3582,7 +3576,38 @@ if(
 
 
     let ticket1 = createTicket(lastNumbers,true,carryMode,mode);
-    let ticket2 = createTicket(lastNumbers,false,carryMode,mode);
+
+let ticket1Pull = ticket1
+    ? ticket1.find(n => lastNumbers.includes(n))
+    : null;
+
+let ticket2 = null;
+let ticket2Try = 0;
+
+
+while(ticket2Try < 100){
+    ticket2Try++;
+
+    let candidateTicket2 = createTicket(lastNumbers,false,carryMode,mode);
+
+    if(candidateTicket2 === null) continue;
+
+let ticket2Pull = candidateTicket2.find(n =>
+    lastNumbers.includes(n)
+);
+
+if(ticket1Pull !== null && ticket2Pull === ticket1Pull) continue;
+
+let overlapCount = candidateTicket2.filter(n =>
+    ticket1.includes(n)
+).length;
+
+    if(overlapCount <= 1){
+        ticket2 = candidateTicket2;
+        break;
+    }
+}
+
 
     if(ticket1 === null || ticket2 === null){
     alert("条件が厳しすぎて生成できませんでした。");
